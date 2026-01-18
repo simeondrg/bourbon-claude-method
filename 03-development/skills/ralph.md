@@ -289,6 +289,20 @@ Claude: [modifie directement] → /commit
 - Impact sur la logique métier
 - Nouveau code (pas juste une correction)
 
+**Règle des 5 secondes** : Si tu hésites plus de 5 secondes sur si c'est un fast-track, ce n'est PAS un fast-track.
+
+### Gestion des Branches
+
+| Situation | Branche | Qui la crée |
+|-----------|---------|-------------|
+| Feature | `feature/{prd-name}` | `/ralph` automatiquement |
+| Fast-Track | `main` | Aucune (commit direct) |
+| Fix urgent | `hotfix/{bug-name}` | Manuellement |
+
+- `/ralph` crée la branche au début
+- `/commit` pousse et crée une PR vers `main`
+- Fast-track = commit direct sur `main`
+
 ### Rollback (bug en prod)
 
 ```bash

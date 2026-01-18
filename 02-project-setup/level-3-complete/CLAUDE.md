@@ -90,7 +90,15 @@ Claude: [modifie directement] → /commit
 
 **Critères** : typo, couleur, texte, pas d'impact logique métier.
 
-⚠️ En cas de doute → workflow complet.
+**Règle des 5 secondes** : Si tu hésites plus de 5 secondes, ce n'est PAS un fast-track.
+
+### Gestion des Branches
+
+| Situation | Branche |
+|-----------|---------|
+| Feature | `feature/{prd-name}` (créée par `/ralph`) |
+| Fast-Track | `main` (direct) |
+| Fix urgent | `hotfix/{bug-name}` |
 
 ### Rollback (bug en prod)
 
