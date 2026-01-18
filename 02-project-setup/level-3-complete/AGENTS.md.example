@@ -1,0 +1,365 @@
+# AGENTS.md - VuVenu v2
+
+Documentation des learnings et patterns pour agents futurs (Compound Engineering).
+
+## Principe
+Chaque unité de travail doit rendre les suivantes plus faciles. Ce fichier documente les apprentissages pour que les prochains agents/features bénéficient de l'expérience accumulée.
+
+---
+
+## 🏗️ Architecture Patterns
+
+### Pattern 1: Structure BDD vs Code
+**Context**: Génération de campagnes échouait car code tentait d'insérer colonnes inexistantes.
+
+**Learning**:
+- ⚠️ **TOUJOURS** vérifier schéma BDD (`supabase/migrations/001_initial_schema.sql`) avant d'écrire code d'insertion
+- Structure `meta_campaigns`: utilise `brief` (JSONB input) + `output` (JSONB résultat IA)
+- Structure `meta_images`: utilise `concept_id` (INTEGER) + `variation_id` (TEXT)
+- Ne PAS créer colonnes individuelles pour chaque paramètre → utiliser JSONB
+
+**Code Pattern**:
+```typescript
+// ✅ BON : Aligner avec schéma
+await supabase.from('meta_campaigns').insert({
+  commerce_id,
+  brief: { product_service, objective, budget_daily, ... }, // JSONB
+  output: campaignData, // JSONB
+  objective,
+  budget_daily,
+  status: 'generating'
+})
+```
+
+### Pattern 2: Migrations Supabase
+**Context**: Colonnes Stripe manquantes empêchaient webhooks de fonctionner.
+
+**Learning**:
+- Créer migration séparée pour chaque changement de schéma
+- Format : `XXX_description_change.sql`
+- Migration 002: trigger auto-création user
+- Migration 003: colonnes Stripe (`stripe_customer_id`, `stripe_subscription_id`, `trial_ends_at`)
+- Appliquer migrations manuellement via Dashboard ou CLI
+
+### Pattern 3: Validation Limites Mensuelles
+**Context**: Vérification limites cherchait dans mauvaise table.
+
+**Learning**:
+- Compter usage dans `usage_logs` avec `action_type`, PAS dans table principale
+- Utiliser `created_at >= startOfMonth` pour période
+- Limites: free: 2, starter: 10, pro: 50, business: 999999
+
+**Code Pattern**:
+```typescript
+const { count } = await supabase
+  .from('usage_logs')
+  .select('*', { count: 'exact', head: true })
+  .eq('user_id', userId)
+  .eq('action_type', 'meta_campaign_generated')
+  .gte('created_at', startOfMonth)
+
+if (count >= monthlyLimit) {
+  throw new Error('Limite mensuelle atteinte')
+}
+```
+
+---
+
+## 🔐 Sécurité Patterns
+
+### Pattern 1: Clés API
+**Context**: Clé Anthropic invalide car variable d'env dans `~/.zshrc` écrasait `.env.local`.
+
+**Learning**:
+- ⚠️ Ne JAMAIS mettre de clés API dans fichiers shell (`~/.zshrc`, `~/.bashrc`)
+- Toujours dans `.env.local` du projet
+- Vérifier avec `echo $VAR_NAME` qu'aucune var système n'écrase
+- Redémarrer serveur après changement `.env.local`
+
+### Pattern 2: RLS Policies
+**Context**: Tables nécessitent RLS pour sécurité.
+
+**Learning**:
+- Toutes tables user-facing: RLS obligatoire
+- Policy pattern: `user_id = auth.uid()` pour isolation
+- Service role key bypass RLS (attention usage)
+
+---
+
+## 🧪 Testing Patterns
+
+### Pattern 1: Tests E2E avec Playwright
+**Context**: Agent browser nécessite session auth.
+
+**Learning**:
+- Tests E2E sans auth: tester pages publiques seulement
+- Tests avec auth: setup fixture Playwright avec session
+- Ou tester manuellement après corrections
+
+### Pattern 2: Tests de Régression
+**Context**: Bugs trouvés doivent devenir tests.
+
+**Learning**:
+- Bug "failed to save campaign" → test insertion meta_campaigns
+- Bug "colonnes manquantes" → test schéma BDD complet
+- Automatiser via CI/CD quand possible
+
+---
+
+## 🎨 UI/UX Patterns
+
+### Pattern 1: Boutons CTA (btn-sparkle)
+**Date**: 2026-01-18
+**Context**: Uniformisation des boutons sur la landing page - certains étaient noirs, d'autres lime, incohérence visuelle.
+
+**Learning**:
+- **Classe obligatoire** : `btn-sparkle` pour TOUS les boutons CTA
+- Le CSS `.btn-sparkle` dans `globals.css` force le style avec `!important`
+- **Ne jamais** ajouter `bg-vuvenu-dark` ou `bg-vuvenu-lime` en inline sur un `btn-sparkle`
+- L'icône `<Sparkles />` doit être AVANT le texte, pas après
+
+**Code Pattern**:
+```tsx
+// ✅ CORRECT
+<Link href="/register" className="btn-sparkle font-bold px-8 py-3 rounded-lg">
+  <Sparkles className="w-4 h-4 sparkle-icon" />
+  Commencer Gratuitement
+</Link>
+
+// ❌ INCORRECT - les classes inline créent des conflits
+<Link className="btn-sparkle bg-vuvenu-dark text-white ...">
+  Commencer
+  <Sparkles className="w-4 h-4" />  // Icône après = incorrect
+</Link>
+```
+
+**Style btn-sparkle** (défini dans globals.css):
+- Background: gradient lime (#BFFF00 → #D4FF4D)
+- Glow: halo lime autour du bouton
+- Hover: scale(1.05) + translateY(-2px) + glow intensifié
+- Active: scale(0.98)
+
+### Pattern 2: CSS Hot Reload
+**Date**: 2026-01-18
+**Context**: Modifications CSS non visibles après sauvegarde.
+
+**Learning**:
+- Next.js Turbopack ne recharge pas toujours le CSS modifié
+- **Solution** : Redémarrer `npm run dev` si les styles ne s'appliquent pas
+- Vérifier dans DevTools que la règle CSS est bien chargée
+
+### Pattern 3: Gestion d'Erreurs UI
+**Context**: Erreurs Supabase non affichées à l'utilisateur.
+
+**Learning**:
+- Toujours capturer `error` des requêtes Supabase
+- Afficher message d'erreur utilisateur-friendly
+- Logger erreur détaillée côté serveur pour debug
+
+**Code Pattern**:
+```typescript
+// ❌ Mauvais
+const { data } = await supabase.from('table').insert(...)
+
+// ✅ Bon
+const { data, error } = await supabase.from('table').insert(...)
+if (error) {
+  console.error('Insert error:', error) // Log serveur
+  alert(`Erreur: ${error.message}`) // Message user
+  return
+}
+```
+
+### Pattern 2: Loading States
+**Context**: Génération IA prend 30-90s.
+
+**Learning**:
+- Loading state explicite obligatoire
+- Désactiver bouton submit pendant génération
+- Message informatif: "Génération en cours... (30-90s)"
+
+---
+
+## 🚀 Déploiement Patterns
+
+### Pattern 1: Migrations Avant Déploiement
+**Context**: Code déployé avant migrations = app cassée.
+
+**Learning**:
+- ⚠️ **TOUJOURS** appliquer migrations AVANT de merger/déployer
+- Workflow: 1) Créer migration → 2) Appliquer à BDD → 3) Merger code
+- Tester localement avec BDD de dev d'abord
+
+### Pattern 2: Variables d'Env en Production
+**Context**: Clés API différentes dev vs prod.
+
+**Learning**:
+- Vercel: configurer env vars dans dashboard
+- Ne jamais commit `.env.local`
+- Documenter toutes vars nécessaires dans CLAUDE.md
+
+---
+
+## 📊 Monitoring & Logging
+
+### Pattern 1: Logging Structuré
+**Context**: Debug difficile sans logs détaillés.
+
+**Learning**:
+- Préfixer logs: `[DEBUG]`, `[ERROR]`, `[INFO]`
+- Logger infos clés: user_id, action, timestamp
+- Format: `console.error('Context:', error)` avec objet complet
+
+### Pattern 2: Usage Tracking
+**Context**: Besoin tracker usage pour limites.
+
+**Learning**:
+- Insérer dans `usage_logs` après chaque génération réussie
+- Champs: `user_id`, `action_type`, `reference_id`, `tokens_used`, `cost_usd`
+- Permet analytics + enforcement limites
+
+---
+
+## 🔄 Ralph Loop Learnings
+
+### Learning 1: Test & Debug Automation
+**Date**: 2026-01-17
+**Context**: Ralph Loop automatique pour identifier et corriger bugs.
+
+**Résultats**:
+- 4 bugs critiques corrigés en 2 itérations
+- Agents utilisés: @senior-developer, @vuvenu-reviewer
+- 3 commits générés automatiquement
+- Rapport détaillé: `tasks/ralph-loop-report.md`
+
+**Process**:
+1. Créer PRD détaillé (`tasks/prd-test-debug-automation.md`)
+2. Lancer Ralph avec agent approprié
+3. Agent identifie bugs via analyse statique + logs
+4. Corrections appliquées automatiquement
+5. Commit après chaque fix validé
+6. Rapport final généré
+
+**Amélioration Possible**:
+- Tests E2E automatiques nécessitent session auth (actuellement manuel)
+- Appliquer migrations Supabase automatiquement (actuellement manuel)
+
+### Learning 2: Principes Ralph Wiggum (Best Practices)
+**Date**: 2026-01-18
+**Context**: Analyse du site AwesomeClaude pour optimiser notre workflow.
+**Source**: https://awesomeclaude.ai/ralph-wiggum
+
+**Principes Fondamentaux**:
+1. **Iteration > Perfection** - Ne pas viser parfait du premier coup
+2. **Failures Are Data** - Les échecs sont informatifs, pas des blocages
+3. **Operator Skill Matters** - Bons PRDs > bon modèle
+4. **Persistence Wins** - La loop gère les retries automatiquement
+
+**Best Practices PRD**:
+```markdown
+# ❌ MAUVAIS PRD
+Build a todo API and make it good.
+
+# ✅ BON PRD
+Build a REST API for todos.
+
+When complete:
+- All CRUD endpoints working
+- Input validation in place
+- Tests passing (coverage > 80%)
+- Output: <promise>COMPLETE</promise>
+```
+
+**Escape Hatches** (à toujours configurer):
+- `--max-iterations` : Safety net pour éviter loops infinies
+- Stuck detection : Si 3 retries échouent sur même erreur → STOP
+- Partial success : Commit ce qui fonctionne même si bloqué
+
+**Quand utiliser Ralph**:
+| ✅ Bon pour Ralph | ❌ Pas bon pour Ralph |
+|-------------------|----------------------|
+| Tasks bien définies | Jugement design subjectif |
+| Critères de succès clairs | Debug production |
+| Vérification automatique | Critères flous |
+| Greenfield code | Approbation externe requise |
+
+---
+
+## 📝 Conventions Code VuVenu
+
+### TypeScript
+- Strict mode obligatoire
+- Préférer interfaces aux types pour objets
+- Type assertions `as any` OK pour contourner bugs typing Supabase (documenter)
+
+### Imports
+```typescript
+// 1. React/Next
+import { useState } from 'react'
+// 2. Libs externes
+import { z } from 'zod'
+// 3. Composants internes
+import { Button } from '@/components/ui/button'
+// 4. Lib interne
+import { createClient } from '@/lib/supabase/client'
+// 5. Types
+import type { Script } from '@/types/database'
+```
+
+### Naming
+- Components: PascalCase (`CampaignForm`)
+- Functions: camelCase (`generateScript`)
+- Files: kebab-case (`campaign-form.tsx`)
+- API routes: kebab-case (`generate-script`)
+
+---
+
+## 🎯 Prochaines Améliorations
+
+### Court Terme
+- [ ] Ajouter tests E2E Playwright complets (avec auth)
+- [ ] Setup monitoring erreurs (Sentry)
+- [ ] Automatiser application migrations Supabase
+
+### Moyen Terme
+- [ ] Remplacer `as any` par types propres
+- [ ] Ajouter rate limiting sur APIs publiques
+- [ ] Analytics usage détaillées (coûts par user)
+
+### Long Terme
+- [ ] CI/CD complet avec tests automatiques
+- [ ] Feature flags pour rollout progressif
+- [ ] Alerting automatique sur erreurs production
+
+---
+
+## 🔗 Ressources AwesomeClaude Utiles
+
+**Source**: https://awesomeclaude.ai (exploré 2026-01-18)
+
+### Ressources Bookmarkées
+
+| Ressource | Utilité | URL |
+|-----------|---------|-----|
+| Ralph Wiggum | Technique de loop AI officielle | awesomeclaude.ai/ralph-wiggum |
+| Claude Cookbook | Patterns RAG, tool use (31k stars) | github.com/anthropics/claude-cookbooks |
+| awesome-mcp-servers | MCPs communautaires (79k stars) | github.com/punkpeye/awesome-mcp-servers |
+| awesome-claude-code-subagents | 100+ agents spécialisés (8k stars) | github.com/VoltAgent/awesome-claude-code-subagents |
+
+### MCPs Recommandés (à ajouter si besoin)
+
+| MCP | Quand l'ajouter | Usage |
+|-----|-----------------|-------|
+| Playwright | Tests E2E avancés | Browser automation |
+| Supabase | Debug BDD fréquent | Requêtes directes |
+| GitHub | Gestion PR avancée | Déjà dispo via CLI |
+
+### Ce qu'on n'utilise PAS (et pourquoi)
+
+- **Multi-agent orchestration (oh-my-opencode)** : Over-engineering pour projet solo
+- **100+ subagents** : On en utiliserait 2-3 max, complexité inutile
+- **Agents spécialisés frontend/backend** : Claude Opus fait déjà tout
+
+---
+
+*Dernière mise à jour: 2026-01-18 par Claude Opus 4.5*

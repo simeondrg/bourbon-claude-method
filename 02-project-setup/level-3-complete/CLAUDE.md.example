@@ -1,0 +1,445 @@
+# CLAUDE.md - VuVenu v2
+
+## Projet
+
+**VuVenu** est un SaaS B2B de génération de contenu marketing pour commerces locaux.
+
+- **Cible** : Commerçants locaux français (restaurants, salons, boutiques...)
+- **Produit** : Scripts vidéo + Campagnes Meta Ads générés par IA
+- **Stack** : Next.js 14 + Supabase + Stripe + Claude + Gemini
+
+---
+
+## WORKFLOW OBLIGATOIRE : Plan → Validation → Ralph
+
+**RÈGLE ABSOLUE** : Pour TOUTE demande de modification (feature, fix, changement UI, etc.), suivre ce workflow en 2 étapes :
+
+### Étape 1 : PLAN (automatique)
+
+Dès qu'une modification est demandée :
+
+1. **Analyser** la demande (screenshot, description, ou les deux)
+2. **Explorer** le codebase pour identifier les fichiers concernés
+3. **Créer un PRD** dans `tasks/prd-{feature}.json` avec :
+   - Titre et description
+   - User Stories atomiques (1 story = 1 changement)
+   - Fichiers à modifier
+   - Critères d'acceptation
+4. **Présenter le plan** à l'utilisateur pour validation
+
+Format de présentation :
+```
+📋 PLAN : {titre}
+
+📝 Description : {description}
+
+📌 User Stories :
+- US-001: {titre} → {fichiers}
+- US-002: {titre} → {fichiers}
+
+🎯 Critères d'acceptation :
+- {critère 1}
+- {critère 2}
+
+Valide ce plan ? (oui/non/modifier)
+```
+
+### Étape 2 : RALPH (après validation)
+
+Une fois le plan validé par l'utilisateur :
+
+1. Exécuter `/ralph {feature-name}`
+2. Ralph implémente chaque story automatiquement
+3. Valide (typecheck + lint) après chaque story
+4. Commit après chaque story
+5. Push + crée PR à la fin
+6. Retourne le lien de la PR
+
+### Exemples
+
+**Exemple 1 : Screenshot + description**
+```
+Utilisateur: [screenshot] "Change ce bouton en vert"
+Claude:
+📋 PLAN : bouton-vert-hero
+📝 Description : Modifier la couleur du bouton CTA hero en vert lime
+📌 User Stories :
+- US-001: Modifier classe CSS du bouton → src/app/page.tsx
+🎯 Critères : Bouton affiche bg-vuvenu-lime
+Valide ce plan ?
+
+Utilisateur: oui
+Claude: /ralph bouton-vert-hero
+[... exécution ...]
+✅ PR: https://github.com/.../pull/N
+```
+
+**Exemple 2 : Nouvelle feature**
+```
+Utilisateur: "Ajoute un dark mode"
+Claude:
+📋 PLAN : dark-mode
+📝 Description : Implémenter le dark mode sur l'application
+📌 User Stories :
+- US-001: Ajouter CSS variables dark → globals.css
+- US-002: Créer toggle component → components/ui/theme-toggle.tsx
+- US-003: Persister préférence → localStorage
+🎯 Critères : Toggle fonctionne, préférence persistée
+Valide ce plan ?
+
+Utilisateur: oui
+Claude: /ralph dark-mode
+```
+
+### Ce workflow s'applique à :
+- Nouvelles features
+- Modifications UI (avec ou sans screenshot)
+- Bug fixes
+- Refactoring
+- Ajout de composants
+- Modifications de style
+
+### Exceptions (pas besoin de Ralph) :
+- Questions sur le code (lecture seule)
+- Recherche dans le codebase
+- Explication de fonctionnement
+- Conseils d'architecture (sans implémentation)
+
+---
+
+## Documents de Référence (dans ce projet)
+
+Tous les documents sont maintenant dans `reference/` :
+
+```
+reference/
+├── foundations/           # Documents fondateurs
+│   ├── 01-BUSINESS-PLAN.md
+│   ├── 02-PRODUCT-SPECIFICATION.md
+│   ├── 03-BRAND-IDENTITY.md
+│   ├── 04-TECHNICAL-ARCHITECTURE.md
+│   ├── 05-CONTENT-ENGINE.md
+│   └── 06-OPERATIONAL-GUIDE.md
+├── skills/                # Prompts IA
+│   ├── vu-venu-scripts.zip
+│   └── vu-venu-meta-ads.zip
+└── viral-reports/         # 22 rapports par industrie
+    ├── Activités & Loisirs/
+    ├── Animaux/
+    ├── ... (22 dossiers)
+    └── Wellness & Relaxation/
+```
+
+**Autres fichiers clés** :
+- `supabase/migrations/001_initial_schema.sql` - Schema PostgreSQL complet
+- `src/lib/data/industries-full.json` - 22 industries, 152 niches
+
+---
+
+## Plan d'Implémentation
+
+Voir `RALPH-LOOP-PLAN.md` pour le plan complet en 6 phases.
+
+---
+
+## Design System
+
+### Couleurs
+```css
+--vuvenu-lime: #BFFF00;      /* CTA principal */
+--vuvenu-blue: #60A5FA;      /* Éléments graphiques */
+--vuvenu-violet: #C4B5FD;    /* Sections secondaires */
+--vuvenu-cream: #FFFBEB;     /* Background */
+--vuvenu-dark: #0F172A;      /* Sidebar, texte */
+```
+
+### Typographie
+- **Titres** : Satoshi (font-display)
+- **Corps** : Inter (font-sans)
+- **Accents** : Playfair Display (font-accent)
+
+### Composants
+- Utiliser shadcn/ui exclusivement
+- Boutons primaires : bg-vuvenu-lime text-vuvenu-dark
+- Cards : bg-white rounded-2xl shadow-lg
+- Sidebar : bg-vuvenu-dark text-white
+
+---
+
+## Conventions Code
+
+### Structure Fichiers
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Routes non connectées
+│   ├── (dashboard)/       # Routes connectées
+│   ├── (marketing)/       # Pages publiques
+│   └── api/               # Routes API
+├── components/
+│   ├── ui/                # shadcn/ui
+│   ├── auth/
+│   ├── dashboard/
+│   ├── scripts/
+│   └── campaigns/
+├── lib/
+│   ├── supabase/
+│   ├── stripe/
+│   ├── ai/
+│   └── utils/
+├── hooks/
+└── types/
+```
+
+### TypeScript
+- Mode strict activé
+- Toujours typer les paramètres et retours
+- Utiliser les types générés Supabase
+
+### Imports
+```typescript
+// 1. React/Next
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+// 2. Libs externes
+import { z } from 'zod'
+
+// 3. Composants internes
+import { Button } from '@/components/ui/button'
+
+// 4. Lib interne
+import { createClient } from '@/lib/supabase/client'
+
+// 5. Types
+import type { Script } from '@/types/database'
+```
+
+---
+
+## Règles Strictes
+
+### FAIRE
+- Mobile-first toujours
+- Validation Zod sur tous les inputs API
+- RLS Supabase sur toutes les tables
+- Streaming pour les réponses IA
+- Toast notifications pour feedback
+- Loading states explicites
+- Error boundaries
+
+### NE PAS FAIRE
+- CSS modules (Tailwind uniquement)
+- console.log en production
+- Secrets en dur
+- Fichiers > 300 lignes
+- Over-engineering
+- Dépendances inutiles
+- Composants client sans nécessité
+
+---
+
+## Commands
+
+```bash
+# Développement
+npm run dev
+
+# Build
+npm run build
+
+# Lint
+npm run lint
+
+# Type check
+npm run typecheck
+
+# Générer types Supabase
+npx supabase gen types typescript --project-id <id> > src/types/database.ts
+```
+
+---
+
+## Variables d'Environnement
+
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_STARTER_MONTHLY=
+STRIPE_PRICE_STARTER_YEARLY=
+STRIPE_PRICE_PRO_MONTHLY=
+STRIPE_PRICE_PRO_YEARLY=
+STRIPE_PRICE_BUSINESS_MONTHLY=
+STRIPE_PRICE_BUSINESS_YEARLY=
+
+# AI
+ANTHROPIC_API_KEY=
+GOOGLE_AI_API_KEY=
+
+# App
+NEXT_PUBLIC_APP_URL=
+```
+
+---
+
+## Patterns Récurrents
+
+### Formulaire avec validation
+```typescript
+const formSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+})
+
+export function MyForm() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  })
+  // ...
+}
+```
+
+### Route API protégée
+```typescript
+export async function POST(request: NextRequest) {
+  const supabase = await createClient()
+
+  const { data: { user }, error } = await supabase.auth.getUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Valider input avec Zod
+  // Vérifier limites
+  // Exécuter logique
+  // Retourner résultat
+}
+```
+
+### Streaming IA
+```typescript
+const stream = await anthropic.messages.stream({
+  model: 'claude-sonnet-4-20250514',
+  messages: [...],
+})
+
+return new Response(stream.toReadableStream())
+```
+
+---
+
+## Sécurité
+
+- Jamais de secrets côté client
+- Toujours valider les inputs serveur
+- RLS sur toutes les tables utilisateur
+- Vérifier signature webhooks Stripe
+- Limiter les appels API IA par user
+
+---
+
+*VuVenu v2 - Janvier 2026*
+
+---
+
+## 🎯 Skill Principal : /ralph
+
+**Un seul skill pour tout** : `/ralph {feature-name}`
+
+Exécute un PRD validé de manière autonome :
+1. **Lit AGENTS.md** - Charge les patterns et conventions
+2. Crée la branche
+3. Implémente chaque User Story
+4. Valide (typecheck + lint)
+5. Commit après chaque story
+6. **Met à jour AGENTS.md** - Si nouveaux patterns découverts
+7. Push + crée PR
+
+Voir `.claude/commands/ralph.md` pour la documentation complète.
+
+## 📚 AGENTS.md - Mémoire Persistante
+
+**Compound Engineering** : Chaque unité de travail rend les suivantes plus faciles.
+
+`AGENTS.md` à la racine du projet contient :
+- Patterns de code réutilisables (ex: `btn-sparkle` pour boutons)
+- Gotchas rencontrés et solutions
+- Conventions établies
+- Learnings des itérations précédentes
+
+**Mis à jour automatiquement** par Ralph quand un nouveau pattern pertinent est découvert.
+
+## 📸 Mapping zones → fichiers
+
+| Zone | Fichier |
+|------|---------|
+| Landing Page | `src/app/page.tsx` |
+| Sidebar | `src/components/dashboard/sidebar.tsx` |
+| Header | `src/components/dashboard/header.tsx` |
+| Dashboard KPIs | `src/components/dashboard/kpi-cards.tsx` |
+| Scripts List | `src/app/(dashboard)/scripts/page.tsx` |
+| Campaigns | `src/app/(dashboard)/campaigns/page.tsx` |
+| Settings | `src/app/(dashboard)/settings/page.tsx` |
+| UI Components | `src/components/ui/*.tsx` |
+| CSS Global | `src/app/globals.css` |
+
+## 📋 Checklist Feature VuVenu
+
+Avant de considérer une feature complète :
+
+- [ ] Code TypeScript strict (pas de `any` non justifié)
+- [ ] Schéma BDD aligné avec code (migrations créées)
+- [ ] RLS policies en place sur tables user-facing
+- [ ] Validation Zod sur tous les inputs API
+- [ ] Tests E2E couvrent flow principal
+- [ ] Gestion d'erreurs complète (try/catch, logs)
+- [ ] Loading states + error states UI
+- [ ] Mobile-responsive (test sur iPhone/Android)
+- [ ] Performance OK (LCP < 2.5s)
+- [ ] Commit conventionnel + push
+
+## 🐛 Debug Patterns VuVenu
+
+### Erreur Supabase "Failed to save"
+```typescript
+// ❌ Mauvais : pas de gestion d'erreur
+const { data } = await supabase.from('table').insert(...)
+
+// ✅ Bon : log détaillé
+const { data, error } = await supabase.from('table').insert(...)
+if (error) {
+  console.error('Insert error:', error)
+  throw new Error(`Failed to save: ${error.message}`)
+}
+```
+
+### Clé API invalide
+```bash
+# Vérifier ~/.zshrc n'écrase pas .env.local
+grep "ANTHROPIC_API_KEY" ~/.zshrc
+# Si trouvé, commenter la ligne
+
+# Redémarrer serveur dans nouveau shell
+pkill -9 -f "next dev"
+npm run dev
+```
+
+### Migration Supabase non appliquée
+```bash
+# Appliquer manuellement via Dashboard SQL Editor
+# Ou via CLI:
+psql < supabase/migrations/XXX_migration.sql
+```
+
+---
+
+*VuVenu v2 - SaaS B2B Marketing pour Commerces Locaux*
+*Stack: Next.js 16 + Supabase + Stripe + Claude + Gemini*
+

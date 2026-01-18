@@ -1,0 +1,36 @@
+{
+  "id": "feature-name",
+  "title": "Titre de la feature",
+  "description": "Description courte et claire de ce que fait cette feature",
+  "branch": "feature/feature-name",
+  "stories": [
+    {
+      "id": "US-001",
+      "title": "Titre de la première story",
+      "description": "Ce qui doit être fait précisément",
+      "files": ["src/path/to/file.tsx"],
+      "acceptance": [
+        "Critère vérifiable 1",
+        "Critère vérifiable 2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "US-002",
+      "title": "Titre de la deuxième story",
+      "description": "Ce qui doit être fait précisément",
+      "files": ["src/path/to/other-file.tsx"],
+      "acceptance": [
+        "Critère vérifiable 1"
+      ],
+      "status": "pending"
+    }
+  ],
+  "completion_criteria": [
+    "npm run typecheck passe sans erreur",
+    "npm run lint passe sans erreur",
+    "Feature visible et fonctionnelle"
+  ],
+  "created": "2026-01-XX",
+  "validated": false
+}
