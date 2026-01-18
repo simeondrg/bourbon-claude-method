@@ -26,11 +26,12 @@ Les skills sont des commandes personnalisées pour automatiser les tâches récu
 
 | Skill | Description | Fichier |
 |-------|-------------|---------|
-| `/commit` | Commits conventionnels | [commit.md](./skills/commit.md) |
-| `/ralph` | Exécution PRD autonome | [ralph.md](./skills/ralph.md) |
 | `/prd` | Génération PRD structuré | [prd.md](./skills/prd.md) |
-| `/review` | Code review | [review.md](./skills/review.md) |
+| `/design` | Inspiration + direction design | [design.md](./skills/design.md) |
+| `/ralph` | Exécution PRD autonome | [ralph.md](./skills/ralph.md) |
+| `/commit` | Commits conventionnels | [commit.md](./skills/commit.md) |
 | `/compound` | Documentation learnings | [compound.md](./skills/compound.md) |
+| `/review` | Code review | [review.md](./skills/review.md) |
 | `/test` | Suite de tests | [test.md](./skills/test.md) |
 | `/deploy` | Déploiement | [deploy.md](./skills/deploy.md) |
 
@@ -57,6 +58,11 @@ Les skills sont des commandes personnalisées pour automatiser les tâches récu
 │ Valider │           │  /review    │         │ /compound│
 │ le plan │           │  /test      │         │ Documenter│
 └─────────┘           └─────────────┘         └──────────┘
+
+💡 Pour les demandes design vagues, utiliser /design AVANT /prd :
+
+   Demande vague ──▶ /design ──▶ /prd ──▶ /ralph ──▶ /deploy
+                    (clarifier)  (planifier) (coder)   (livrer)
 ```
 
 ---
