@@ -1,4 +1,4 @@
-# 🚀 Bourbon Claude Method
+# Bourbon Claude Method
 
 **La méthode complète pour créer n'importe quel projet avec Claude Code - même si tu n'as jamais codé.**
 
@@ -6,7 +6,7 @@ De l'idée au site en ligne, en passant par le développement - un assistant qui
 
 ---
 
-## ✨ C'est pour qui ?
+## C'est pour qui ?
 
 - **Entrepreneurs** qui veulent créer leur site/app sans coder
 - **Créateurs** qui veulent lancer leurs projets rapidement
@@ -15,162 +15,152 @@ De l'idée au site en ligne, en passant par le développement - un assistant qui
 
 ---
 
-## 🎯 En 3 minutes, tu auras :
+## Workflow Principal
 
-1. ✅ Tous les outils installés automatiquement
-2. ✅ Un assistant qui te pose les bonnes questions
-3. ✅ Ton projet créé et configuré
-4. ✅ Ta première page visible
-5. ✅ Ton site en ligne !
+```
+/prd → /ralph → /test → /review → /commit → /compound (optionnel)
+         ↑         ↑
+         └─ fix ───┘
+```
+
+| Skill | Description |
+|-------|-------------|
+| `/prd` | Génère un PRD structuré avec User Stories |
+| `/ralph` | Implémentation autonome avec quality gates |
+| `/test` | Tests complets (typecheck, lint, build, E2E) |
+| `/review` | Code review automatique avec scoring |
+| `/commit` | Commit conventionnel + push |
+| `/compound` | Documente les learnings |
 
 ---
 
-## 🚀 Installation (1 minute)
+## Les 3 Niveaux
 
-### Sur Mac ou Linux
+| Niveau | Pour qui | Durée | Skills |
+|--------|----------|-------|--------|
+| **Level 1 - Minimal** | Landing pages, sites vitrines | 1-3 jours | Aucun |
+| **Level 2 - Standard** | Apps web, MVPs | 1-4 semaines | `/commit`, `/review` |
+| **Level 3 - Complete** | SaaS, apps complexes | 1-6 mois | Tous les skills |
+
+---
+
+## Installation (1 minute)
+
+### Mac/Linux
 
 ```bash
-# Clone le repo
 git clone https://github.com/simeondrg/bourbon-claude-method.git
-
-# Lance l'installation
 cd bourbon-claude-method
 ./setup.sh
 ```
 
-### Sur Windows
+### Windows (PowerShell admin)
 
 ```powershell
-# Clone le repo
 git clone https://github.com/simeondrg/bourbon-claude-method.git
-
-# Ouvre PowerShell en admin et lance
 cd bourbon-claude-method
 .\setup.ps1
 ```
 
-Le script installe automatiquement :
-- ✅ Node.js (si pas installé)
-- ✅ Git (si pas installé)
-- ✅ GitHub CLI (si pas installé)
-- ✅ Claude Code (si pas installé)
-- ✅ Les commandes Bourbon
+Le script installe automatiquement Node.js, Git, GitHub CLI et Claude Code si nécessaire.
 
 ---
 
-## 🎬 Créer ton premier projet (5 minutes)
+## Créer un projet (5 minutes)
 
 ```bash
-# Crée un dossier pour ton projet
-mkdir mon-super-projet
-cd mon-super-projet
-
-# Lance Claude Code
-claude
-
-# Tape la commande magique
-/start
-```
-
-**C'est tout !** L'assistant te guide pour le reste.
-
----
-
-## 🔄 Reprendre un projet existant
-
-Tu peux quitter à tout moment. Pour reprendre :
-
-```bash
-cd mon-super-projet
+mkdir mon-projet
+cd mon-projet
 claude
 /start
 ```
 
-L'assistant se souvient où tu en étais et reprend automatiquement.
+L'assistant te guide pour le reste.
 
 ---
 
-## 📦 Types de projets supportés
+## Types de projets supportés
 
-| Type | Description | Exemple |
-|------|-------------|---------|
-| 🖼️ **Site Vitrine** | Présenter ton activité | Restaurant, Portfolio |
-| 🛠️ **Application Web** | Outil avec connexion utilisateur | Dashboard, Réservations |
-| 💰 **SaaS** | Logiciel avec abonnement | Outil de gestion, Formation |
-| 📱 **App Mobile** | Application smartphone | App de livraison |
-
----
-
-## 🎓 Comment ça marche ?
-
-### L'assistant te guide en 5 étapes :
-
-```
-ÉTAPE 1 : QUESTIONS (2 min)
-└─ Je comprends ton projet
-
-ÉTAPE 2 : CRÉATION (3 min)
-└─ Je crée la structure automatiquement
-
-ÉTAPE 3 : PERSONNALISATION (10 min)
-└─ On modifie ensemble le contenu
-
-ÉTAPE 4 : MISE EN LIGNE (2 min)
-└─ Ton site est accessible à tous !
-
-ÉTAPE 5 : ÉVOLUTION (continu)
-└─ Tu me demandes des modifications quand tu veux
-```
+| Type | Description | Niveau recommandé |
+|------|-------------|-------------------|
+| Site Vitrine | Restaurant, Portfolio | Level 1 |
+| Application Web | Dashboard, Réservations | Level 2 |
+| SaaS | Outil de gestion, Formation | Level 3 |
+| App Mobile | Application smartphone | Level 3 |
 
 ---
 
-## 💬 Commandes disponibles
-
-Une fois dans un projet :
-
-| Commande | Description |
-|----------|-------------|
-| `/start` | Démarrer ou reprendre le projet |
-| `/recap` | Voir l'état du projet |
-| `/help` | Aide et suggestions |
-| `/commit` | Sauvegarder ton travail |
-| `/deploy` | Mettre en ligne |
-
----
-
-## 🗂️ Structure du Framework
+## Structure du Framework
 
 ```
 bourbon-claude-method/
-│
-├── setup.sh               # Installation automatique
-├── templates/
-│   ├── commands/          # Commandes de l'assistant
-│   └── projects/          # Templates de projets
-│
-├── 00-getting-started/    # Guides d'installation
-├── 01-idea-to-plan/       # Valider et planifier ton idée
-├── 02-project-setup/      # Configuration par niveau
-├── 03-development/        # Workflows de développement
-├── 04-launch/             # Déploiement
-├── 05-monetize/           # Monétisation
-│
-└── premium-course/        # Cours vidéo (bientôt)
+├── setup.sh                    # Installation automatique
+├── templates/commands/         # Commandes de l'assistant
+├── 00-getting-started/         # Guides d'installation
+├── 01-idea-to-plan/            # Valider et planifier ton idée
+├── 02-project-setup/           # Configuration par niveau
+│   ├── level-1-minimal/        # CLAUDE.md seulement
+│   ├── level-2-standard/       # + AGENTS.md + /commit + /review
+│   └── level-3-complete/       # + Tous les skills
+├── 03-development/             # Workflows de développement
+│   ├── workflows/              # Par type de projet
+│   └── skills/                 # Documentation des skills
+├── 04-launch/                  # Déploiement
+└── 05-monetize/                # Monétisation
 ```
 
 ---
 
-## 📚 Pour les développeurs
+## Règles de Workflow
 
-Si tu veux comprendre comment ça marche sous le capot :
+### Fast-Track (micro-changements)
 
-### Les 3 niveaux de configuration
+Pour les changements triviaux (< 5 lignes, 1 fichier) :
+- Modification directe → `/commit`
+- Pas de PRD nécessaire
 
-| Niveau | Usage | Complexité |
-|--------|-------|------------|
-| 🟢 Minimal | Landing page | CLAUDE.md seulement |
-| 🟡 Standard | Web app | + AGENTS.md + commandes |
-| 🔴 Complete | SaaS | + hooks + subagents |
+**Règle des 5 secondes** : Si tu hésites plus de 5 secondes, ce n'est PAS un fast-track.
+
+### Gestion des Branches
+
+| Situation | Branche |
+|-----------|---------|
+| Feature | `feature/{prd-name}` (créée par `/ralph`) |
+| Fast-Track | `main` (direct) |
+| Fix urgent | `hotfix/{bug-name}` |
+
+### Rollback (bug en prod)
+
+```bash
+git log --oneline -10          # Identifier le commit
+git revert <commit-hash>       # Revert
+git push origin main           # Push
+/prd fix-{bug-name}            # Créer PRD pour le fix
+```
+
+---
+
+## Philosophie Compound Engineering
+
+> "Chaque unité de travail doit rendre les suivantes plus faciles."
+
+```
+Sans Compound:
+Feature 1 → Oubliée
+Feature 2 → Mêmes erreurs
+Feature 3 → Mêmes erreurs
+
+Avec Compound:
+Feature 1 → Learning documenté
+Feature 2 → Évite erreur 1
+Feature 3 → Capitalise sur 2 learnings
+```
+
+Utilise `/compound` après chaque feature significative pour documenter dans AGENTS.md.
+
+---
+
+## Pour les développeurs
 
 ### Documentation avancée
 
@@ -179,42 +169,29 @@ Si tu veux comprendre comment ça marche sous le capot :
 - [Skill Ralph (loop autonome)](03-development/skills/ralph.md)
 - [Workflow SaaS](03-development/workflows/saas.md)
 
----
+### Stack recommandée (Level 3)
 
-## 💡 Philosophie
-
-### Les 4 principes Bourbon
-
-1. **🎯 Clarté avant code** - Toujours comprendre avant de construire
-2. **🔄 Itération rapide** - Mieux vaut imparfait et livré que parfait et jamais fini
-3. **📚 Capitalisation** - Chaque projet rend le suivant plus facile
-4. **💰 Business first** - Le code sert le business, pas l'inverse
-
-### Inspiré de
-
-- [Ralph Wiggum Technique](https://awesomeclaude.ai/ralph-wiggum) - Loop AI itératif
-- [Vibe Coding Guide](https://awesomeclaude.ai/vibe-coding-guide) - AI-directed development
-- [Awesome Claude](https://awesomeclaude.ai) - Ressources communautaires
+- **Frontend** : Next.js 14 (App Router) + Tailwind + shadcn/ui
+- **Backend** : Supabase (PostgreSQL + Auth + Storage)
+- **Infra** : Vercel + Stripe
+- **Tests** : Playwright (E2E) + Vitest (Unit)
 
 ---
 
-## 🎁 Cours Premium (bientôt)
+## Cours Premium (bientôt)
 
 Le repo est gratuit et complet. Pour aller plus loin :
 
 **[Bourbon Claude Masterclass](https://bourbonmedia.fr/masterclass)**
 
-- 📹 Vidéos tutoriels pas-à-pas
-- 🎯 Projets guidés de A à Z
-- 💬 Accès communauté privée
-- 🔧 Templates premium
-- 📞 Sessions Q&A live
+- Vidéos tutoriels pas-à-pas
+- Projets guidés de A à Z
+- Accès communauté privée
+- Sessions Q&A live
 
 ---
 
-## 🤝 Contribuer
-
-Les contributions sont bienvenues !
+## Contribuer
 
 1. Fork le repo
 2. Crée une branche (`git checkout -b feature/amelioration`)
@@ -224,13 +201,13 @@ Les contributions sont bienvenues !
 
 ---
 
-## 📄 Licence
+## Licence
 
 MIT License - Utilise, modifie, partage librement.
 
 ---
 
-## 🔗 Liens
+## Liens
 
 - [Bourbon Media](https://bourbonmedia.fr) - Mon agence
 - [Twitter/X](https://twitter.com/simeondrg) - Updates quotidiens
@@ -238,4 +215,4 @@ MIT License - Utilise, modifie, partage librement.
 
 ---
 
-*Créé avec ❤️ et Claude Code à La Réunion 🏝️*
+*Créé avec Claude Code à La Réunion*

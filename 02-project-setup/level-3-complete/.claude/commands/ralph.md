@@ -259,8 +259,19 @@ Après l'implémentation, Ralph met à jour AGENTS.md **SI** :
 
 - Créer le PRD (c'est fait AVANT par Claude lors de la phase Plan)
 - Demander validation (le PRD est déjà validé)
-- Merger la PR (l'utilisateur le fait manuellement)
+- Merger la PR automatiquement (voir règle fin de session ci-dessous)
 - Lancer les tests E2E (optionnel, à la demande)
+
+## Règle Fin de Session - Merge des PRs
+
+**IMPORTANT** : Quand l'utilisateur indique qu'il termine sa session ("on s'arrête là", "c'est bon pour aujourd'hui", "je reprends demain", etc.), Claude DOIT :
+
+1. Vérifier s'il y a des PRs ouvertes avec `gh pr list`
+2. Si oui, demander : "Tu veux merger les PRs ouvertes avant de partir ?"
+3. Si l'utilisateur confirme → `gh pr merge <numero> --squash --delete-branch`
+4. Si non → laisser ouvert pour review ultérieure
+
+Cela garantit que le travail validé est intégré à main, tout en laissant la possibilité de comparer/réfléchir si besoin.
 
 ## Quand Utiliser Ralph (vs Manuel)
 

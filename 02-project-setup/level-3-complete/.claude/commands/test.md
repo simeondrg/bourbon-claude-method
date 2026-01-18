@@ -1,29 +1,29 @@
 ---
-name: test-vuvenu
-description: "Tests complets environnement VuVenu"
+name: test
+description: "Tests complets (typecheck, lint, build, E2E)"
 ---
 
-# Test VuVenu - Suite de Tests Complète
+# Test - Suite de Tests Complète
 
-Lance une suite de tests complète pour vérifier que l'environnement VuVenu fonctionne correctement.
+Lance une suite de tests complète pour vérifier que le projet fonctionne correctement.
 
 ## Usage
 
 ```
-/test-vuvenu [scope]
+/test [scope]
 ```
 
 **Scopes disponibles:**
-- `/test-vuvenu` → Tests complets (défaut)
-- `/test-vuvenu quick` → Tests rapides (typecheck + lint uniquement)
-- `/test-vuvenu build` → Test build production
-- `/test-vuvenu e2e` → Tests E2E (pages publiques)
+- `/test` → Tests complets (défaut)
+- `/test quick` → Tests rapides (typecheck + lint uniquement)
+- `/test build` → Test build production
+- `/test e2e` → Tests E2E (Playwright)
 
 ## Workflow Complet
 
 ```
-/test-vuvenu
-        ↓
+/test
+    ↓
 ┌─────────────────────────────────────────────────────┐
 │  1. VÉRIFICATIONS PRÉLIMINAIRES                     │
 │     ✓ Node.js version compatible                    │
@@ -31,35 +31,35 @@ Lance une suite de tests complète pour vérifier que l'environnement VuVenu fon
 │     ✓ Variables d'environnement présentes           │
 │     ✓ Serveur de dev accessible                     │
 └─────────────────────────────────────────────────────┘
-        ↓
+    ↓
 ┌─────────────────────────────────────────────────────┐
 │  2. QUALITÉ CODE                                    │
 │     ✓ npm run typecheck (TypeScript strict)         │
 │     ✓ npm run lint (ESLint)                         │
 │     ✓ Prettier format check                         │
 └─────────────────────────────────────────────────────┘
-        ↓
+    ↓
 ┌─────────────────────────────────────────────────────┐
 │  3. BUILD TEST                                      │
 │     ✓ npm run build (production build)              │
 │     ✓ Vérifier taille bundle raisonnable            │
 │     ✓ Pas d'erreurs de compilation                  │
 └─────────────────────────────────────────────────────┘
-        ↓
+    ↓
 ┌─────────────────────────────────────────────────────┐
-│  4. TESTS E2E (si serveur dispo)                    │
-│     Via Chrome MCP ou Playwright:                   │
-│     ✓ Page d'accueil charge                         │
+│  4. TESTS E2E (si configuré)                        │
+│     Via Playwright ou Chrome MCP:                   │
+│     ✓ Pages principales chargent                    │
 │     ✓ Navigation fonctionne                         │
 │     ✓ Pas d'erreurs console JS                      │
 │     ✓ Images se chargent                            │
 │     ✓ Responsive mobile                             │
 └─────────────────────────────────────────────────────┘
-        ↓
+    ↓
 ┌─────────────────────────────────────────────────────┐
 │  5. RAPPORT FINAL                                   │
 │     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━      │
-│     📋 TEST VUVENU REPORT                           │
+│     📋 TEST REPORT                                  │
 │     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━      │
 │     ✅ Préliminaires: PASS                          │
 │     ✅ TypeCheck: PASS (0 errors)                   │
@@ -76,10 +76,7 @@ Lance une suite de tests complète pour vérifier que l'environnement VuVenu fon
 
 ### 1. Variables d'Environnement
 
-Vérifie que ces vars sont définies :
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `ANTHROPIC_API_KEY` ou `GOOGLE_AI_API_KEY`
+Vérifie que les vars essentielles sont définies (selon projet).
 
 ### 2. TypeScript Strict
 
@@ -108,30 +105,38 @@ npm run build
 - Pas de warnings critiques
 - Bundle size < 500KB (first load JS)
 
-### 5. E2E Checks (via Chrome MCP)
+### 5. E2E Checks
 
 | Page | Check |
 |------|-------|
 | `/` | Hero visible, boutons cliquables |
-| `/pricing` | Cards pricing visibles |
-| `/login` | Formulaire présent |
-| `/register` | Formulaire présent |
+| Principales pages | Contenu visible |
+| Console | Pas d'erreurs JS |
+| Images | Toutes chargées |
+
+## Types de Tests
+
+| Type | Outil | Usage |
+|------|-------|-------|
+| **E2E** | Playwright | Features UI, parcours utilisateur |
+| **Unitaires** | Vitest | Logique métier, fonctions |
+| **Intégration** | Vitest + MSW | API endpoints |
 
 ## Intégration Workflow
 
 ### Avant PR
 ```
-/test-vuvenu quick
+/test quick
 ```
 
 ### Avant Merge
 ```
-/test-vuvenu
+/test
 ```
 
 ### Avant Deploy Prod
 ```
-/test-vuvenu build
+/test build
 ```
 
 ## En Cas d'Échec
@@ -147,13 +152,13 @@ Si un test échoue :
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 TEST VUVENU REPORT
+📋 TEST REPORT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 🔍 Préliminaires
   ✅ Node.js: v20.10.0 ✓
   ✅ Dependencies: installed ✓
-  ✅ Env vars: 8/8 present ✓
+  ✅ Env vars: present ✓
   ✅ Dev server: running on :3000 ✓
 
 📝 Code Quality
@@ -168,7 +173,6 @@ Si un test échoue :
 
 🌐 E2E Checks
   ✅ Homepage: loads correctly
-  ✅ Pricing: cards visible
   ✅ Console: no errors
   ✅ Images: all loaded
   ✅ Mobile: responsive OK

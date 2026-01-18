@@ -1,28 +1,31 @@
-# 🛠️ Project Setup - Choisir son niveau
+# Project Setup - Choisir son niveau
 
 ## Les 3 niveaux
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                                                                 │
-│  🟢 LEVEL 1 - MINIMAL                                          │
+│  LEVEL 1 - MINIMAL                                              │
 │  Pour : Landing pages, sites vitrines, projets rapides          │
-│  Temps : 1-3 jours                                              │
+│  Durée : 1-3 jours                                              │
 │  Fichiers : CLAUDE.md uniquement                                │
+│  Skills : Aucun                                                 │
 │                                                                 │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  🟡 LEVEL 2 - STANDARD                                         │
+│  LEVEL 2 - STANDARD                                             │
 │  Pour : Apps web, MVPs, portfolios dynamiques                   │
-│  Temps : 1-4 semaines                                           │
+│  Durée : 1-4 semaines                                           │
 │  Fichiers : CLAUDE.md + AGENTS.md                               │
+│  Skills : /commit, /review                                      │
 │                                                                 │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  🔴 LEVEL 3 - COMPLETE                                         │
+│  LEVEL 3 - COMPLETE                                             │
 │  Pour : SaaS, apps mobiles, projets complexes                   │
-│  Temps : 1-6 mois                                               │
+│  Durée : 1-6 mois                                               │
 │  Fichiers : CLAUDE.md + AGENTS.md + Skills complets             │
+│  Skills : /prd, /ralph, /test, /review, /commit, /compound      │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -36,7 +39,7 @@ Ton projet c'est quoi ?
 │
 ├─→ Site statique / Landing page / Portfolio simple
 │   │
-│   └─→ 🟢 LEVEL 1 - MINIMAL
+│   └─→ LEVEL 1 - MINIMAL
 │       - Pas de backend
 │       - Pas d'auth
 │       - Juste du HTML/CSS/JS
@@ -44,14 +47,14 @@ Ton projet c'est quoi ?
 ├─→ App web avec utilisateurs / MVP / Dashboard
 │   │
 │   ├─→ < 10 pages/fonctionnalités ?
-│   │   └─→ 🟡 LEVEL 2 - STANDARD
+│   │   └─→ LEVEL 2 - STANDARD
 │   │
 │   └─→ > 10 pages ou fonctionnalités complexes ?
-│       └─→ 🔴 LEVEL 3 - COMPLETE
+│       └─→ LEVEL 3 - COMPLETE
 │
 └─→ SaaS / App mobile / Marketplace / Plateforme
     │
-    └─→ 🔴 LEVEL 3 - COMPLETE
+    └─→ LEVEL 3 - COMPLETE
         - Multi-utilisateurs
         - Paiements
         - Features avancées
@@ -61,8 +64,8 @@ Ton projet c'est quoi ?
 
 ## Comparaison détaillée
 
-| Aspect | 🟢 Minimal | 🟡 Standard | 🔴 Complete |
-|--------|-----------|-------------|-------------|
+| Aspect | Minimal | Standard | Complete |
+|--------|---------|----------|----------|
 | **Fichiers config** | CLAUDE.md | + AGENTS.md | + Skills + PRD |
 | **Workflow** | Conversation | + Commits structurés | + Ralph Loop |
 | **Planning** | Aucun | Basique | PRD détaillés |
@@ -73,53 +76,75 @@ Ton projet c'est quoi ?
 
 ---
 
+## Workflow par niveau
+
+### Level 1 - Minimal
+```
+Demande → Claude code → Commit manuel
+```
+
+### Level 2 - Standard
+```
+Demande → Claude code → /review → /commit
+```
+
+### Level 3 - Complete
+```
+/prd → /ralph → /test → /review → /commit → /compound (optionnel)
+         ↑         ↑
+         └─ fix ───┘
+```
+
+---
+
+## Fast-Track (tous niveaux)
+
+Pour les changements triviaux (< 5 lignes, 1 fichier) :
+- Modification directe → `/commit` (Level 2-3)
+- Pas de PRD nécessaire
+
+**Règle des 5 secondes** : Si tu hésites plus de 5 secondes, ce n'est PAS un fast-track.
+
+---
+
+## Gestion des Branches (Level 3)
+
+| Situation | Branche |
+|-----------|---------|
+| Feature | `feature/{prd-name}` (créée par `/ralph`) |
+| Fast-Track | `main` (direct) |
+| Fix urgent | `hotfix/{bug-name}` |
+
+---
+
 ## Quick Start par niveau
 
-### 🟢 Level 1 - Minimal
+### Level 1 - Minimal
 
 ```bash
-# Créer le projet
 mkdir mon-projet && cd mon-projet
-
-# Copier le template
 cp -r /path/to/bourbon-claude-method/02-project-setup/level-1-minimal/* .
-
-# Lancer Claude
 claude
 ```
 
-### 🟡 Level 2 - Standard
+### Level 2 - Standard
 
 ```bash
-# Créer le projet
 mkdir mon-projet && cd mon-projet
-
-# Copier le template
 cp -r /path/to/bourbon-claude-method/02-project-setup/level-2-standard/* .
-
-# Init git
+cp -r .claude .   # Copie les skills
 git init
-
-# Lancer Claude
 claude
 ```
 
-### 🔴 Level 3 - Complete
+### Level 3 - Complete
 
 ```bash
-# Créer le projet
 mkdir mon-projet && cd mon-projet
-
-# Copier le template
 cp -r /path/to/bourbon-claude-method/02-project-setup/level-3-complete/* .
-
-# Init git
+cp -r .claude .   # Copie les skills
 git init
-
-# Installer dépendances (si template avec package.json)
-npm install
-
-# Lancer Claude
+npm install       # Si template avec package.json
 claude
 ```
 
@@ -127,23 +152,24 @@ claude
 
 ## Contenu de chaque niveau
 
-### 🟢 Level 1 - Minimal
+### Level 1 - Minimal
 ```
 level-1-minimal/
 └── CLAUDE.md              # Instructions basiques
 ```
 
-### 🟡 Level 2 - Standard
+### Level 2 - Standard
 ```
 level-2-standard/
 ├── CLAUDE.md              # Instructions projet
 ├── AGENTS.md              # Learnings (vide au départ)
 └── .claude/
     └── commands/
-        └── commit.md      # Skill commit basique
+        ├── commit.md      # Skill commit
+        └── review.md      # Skill review basique
 ```
 
-### 🔴 Level 3 - Complete
+### Level 3 - Complete
 ```
 level-3-complete/
 ├── CLAUDE.md              # Instructions complètes
@@ -153,10 +179,17 @@ level-3-complete/
 │       ├── commit.md      # Commits conventionnels
 │       ├── ralph.md       # Ralph Loop
 │       ├── prd.md         # Générateur PRD
-│       ├── review.md      # Code review
-│       └── compound.md    # Documentation learnings
-└── tasks/
-    └── prd-template.json  # Template PRD
+│       ├── test.md        # Tests complets
+│       ├── review.md      # Code review avec scoring
+│       ├── compound.md    # Documentation learnings
+│       ├── browser.md     # Automatisation navigateur
+│       ├── cost-check.md  # Suivi consommation tokens
+│       ├── lighthouse.md  # Audit performance
+│       └── push.md        # Git push
+├── tasks/
+│   └── prd-template.json  # Template PRD
+└── reference/
+    └── DESIGN-SYSTEM.template.md
 ```
 
 ---
@@ -169,20 +202,20 @@ level-3-complete/
 # Ajouter AGENTS.md
 touch AGENTS.md
 
-# Ajouter le skill commit
+# Ajouter les skills
 mkdir -p .claude/commands
-# Copier le commit.md du level-2
+cp level-2-standard/.claude/commands/*.md .claude/commands/
 ```
 
 ### De Standard vers Complete
 
 ```bash
 # Ajouter les skills manquants
-# Copier depuis level-3-complete/.claude/commands/
+cp level-3-complete/.claude/commands/*.md .claude/commands/
 
 # Ajouter le dossier tasks
 mkdir tasks
-# Copier le template PRD
+cp level-3-complete/tasks/prd-template.json tasks/
 ```
 
 ---

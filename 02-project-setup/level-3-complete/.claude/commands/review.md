@@ -1,67 +1,67 @@
 ---
-name: review-vuvenu
-description: "Code review VuVenu avec agent specialise"
+name: review
+description: "Code review automatique avec scoring"
 ---
 
-# Review VuVenu - Code Review Spécialisé
+# Code Review Automatique
 
-Lance une code review complète des changements en cours, adaptée aux standards VuVenu.
+Lance une code review complète des changements en cours.
 
 ## Usage
 
 ```
-/review-vuvenu [scope]
+/review [scope]
 ```
 
 **Scopes:**
-- `/review-vuvenu` → Review des changements staged (défaut)
-- `/review-vuvenu pr` → Review de la PR courante
-- `/review-vuvenu file src/path` → Review d'un fichier spécifique
-- `/review-vuvenu full` → Review complète du codebase
+- `/review` → Review des changements staged (défaut)
+- `/review pr` → Review de la PR courante
+- `/review file src/path` → Review d'un fichier spécifique
+- `/review full` → Review complète du codebase
 
 ## Workflow
 
 ```
-/review-vuvenu
-        ↓
+/review
+    ↓
 ┌─────────────────────────────────────────────────────┐
 │  1. COLLECTER CHANGEMENTS                           │
 │     - git diff --staged (ou scope spécifié)         │
 │     - Identifier fichiers modifiés                  │
 └─────────────────────────────────────────────────────┘
-        ↓
+    ↓
 ┌─────────────────────────────────────────────────────┐
 │  2. ANALYSE PAR CATÉGORIE                           │
 │     - TypeScript/Types                              │
 │     - Sécurité (RLS, validation)                    │
 │     - Performance (LCP, bundle)                     │
-│     - Patterns VuVenu (AGENTS.md)                   │
+│     - Patterns projet (AGENTS.md)                   │
 │     - Accessibilité                                 │
 └─────────────────────────────────────────────────────┘
-        ↓
+    ↓
 ┌─────────────────────────────────────────────────────┐
 │  3. RAPPORT REVIEW                                  │
-│     🔍 VUVENU CODE REVIEW                           │
+│     🔍 CODE REVIEW                                  │
 │     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━      │
-│     📁 Files: 5 modified                            │
+│     📁 Files: X modified                            │
 │     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━      │
 │                                                     │
 │     ✅ PASSED                                       │
 │     - TypeScript strict: OK                         │
 │     - ESLint: 0 errors                              │
 │                                                     │
-│     ⚠️ WARNINGS (3)                                │
+│     ⚠️ WARNINGS (N)                                │
 │     - [fichier:ligne] Description                   │
 │                                                     │
-│     🚫 BLOCKERS (0)                                 │
+│     🚫 BLOCKERS (N)                                 │
 │     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━      │
-│     📊 Score: 92/100                                │
-│     🎯 Verdict: APPROVED                            │
+│     📊 Score: XX/100                                │
+│     🎯 Verdict: APPROVED/REJECTED                   │
 │     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━      │
 └─────────────────────────────────────────────────────┘
 ```
 
-## Checklist VuVenu
+## Checklist Standard
 
 ### TypeScript
 - [ ] Pas de `any` non justifié
@@ -80,8 +80,8 @@ Lance une code review complète des changements en cours, adaptée aux standards
 - [ ] Pas de re-renders inutiles
 - [ ] Bundle size raisonnable
 
-### Patterns VuVenu (AGENTS.md)
-- [ ] Boutons CTA utilisent `btn-sparkle`
+### Patterns Projet (AGENTS.md)
+- [ ] Patterns documentés respectés
 - [ ] Erreurs Supabase gérées (`{ data, error }`)
 - [ ] Loading states explicites
 - [ ] Structure imports respectée
@@ -120,23 +120,23 @@ Score = 100 - (blockers * 20) - (warnings * 5) - (infos * 1)
 git add .
 
 # Lance la review
-/review-vuvenu
+/review
 ```
 
 ### Avant PR
 ```bash
-/review-vuvenu full
+/review full
 ```
 
 ### Sur PR Existante
 ```bash
-/review-vuvenu pr
+/review pr
 ```
 
 ## Exemple Sortie
 
 ```
-🔍 VUVENU CODE REVIEW
+🔍 CODE REVIEW
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📁 Files reviewed: 5
 📝 Lines changed: +124 / -32
@@ -145,7 +145,6 @@ git add .
 ✅ PASSED
   ✓ TypeScript: 0 errors
   ✓ ESLint: 0 errors
-  ✓ Patterns VuVenu: btn-sparkle utilisé
   ✓ Sécurité: validation Zod présente
 
 ⚠️ WARNINGS (2)
