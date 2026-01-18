@@ -10,16 +10,19 @@
 
 ---
 
-## WORKFLOW OBLIGATOIRE : Plan → Validation → Ralph
+## WORKFLOW OBLIGATOIRE : Plan → Implémentation → Tests → Review → Commit
 
-**RÈGLE ABSOLUE** : Pour TOUTE demande de modification, suivre ce workflow en 2 étapes.
+**RÈGLE ABSOLUE** : Pour TOUTE demande de modification, suivre ce workflow en 5 étapes.
 
-### Étape 1 : PLAN (automatique)
+### Étape 1 : PLAN avec `/prd`
 
 Dès qu'une modification est demandée :
 1. Analyser la demande
 2. Explorer le codebase
-3. Créer un PRD dans `tasks/prd-{feature}.json`
+3. Créer un PRD dans `tasks/prd-{feature}.json` avec :
+   - User Stories atomiques
+   - **Tests E2E** à exécuter
+   - Critères d'acceptation
 4. Présenter le plan pour validation
 
 Format :
@@ -28,16 +31,52 @@ Format :
 📝 Description : {description}
 📌 User Stories :
 - US-001: {titre} → {fichiers}
+🧪 Tests E2E :
+- {scénario test}
 🎯 Critères d'acceptation :
 - {critère}
 
 Valide ce plan ? (oui/non/modifier)
 ```
 
-### Étape 2 : RALPH (après validation)
+### Étape 2 : IMPLÉMENTATION avec `/ralph`
 
 ```
 /ralph {feature-name}
+```
+- Implémente chaque story
+- Quality Gate après chaque story (typecheck + lint)
+- Commit après chaque story validée
+
+### Étape 3 : TESTS avec `/test`
+
+```
+/test {feature-name}
+```
+- Lance les tests E2E définis dans le PRD
+- Si échec → fix avec `/ralph` → re-test
+
+### Étape 4 : REVIEW avec `/review`
+
+```
+/review
+```
+- Review automatique : sécurité, performance, conventions
+- Si issues critiques → fix avant de continuer
+
+### Étape 5 : COMMIT avec `/commit`
+
+```
+/commit
+```
+- Commit final + push + création PR
+
+### Workflow résumé
+
+```
+/prd → /ralph → /test → /review → /commit
+         ↑         ↑
+         └─ fix ───┘
 ```
 
 ---
@@ -64,7 +103,19 @@ Valide ce plan ? (oui/non/modifier)
 
 ## Design System
 
-### Couleurs
+**IMPORTANT** : Créer `reference/DESIGN-SYSTEM.md` (voir template dans `reference/DESIGN-SYSTEM.template.md`)
+
+### Principe : Choisir un des deux modèles
+
+**Option A - Style Unique** : Même style partout (simple, cohérent)
+
+**Option B - Styles Différenciés** (recommandé pour SaaS) :
+| Contexte | Style | Pages |
+|----------|-------|-------|
+| Marketing | Punchy/Brutal | landing, pricing, about |
+| App | Calme/Soft | dashboard, features |
+
+### Couleurs (à définir)
 ```css
 --primary: #[HEX];
 --secondary: #[HEX];
@@ -73,12 +124,13 @@ Valide ce plan ? (oui/non/modifier)
 ```
 
 ### Typographie
-- Titres : [Font]
-- Corps : Inter
+- Titres : [Font Display]
+- Corps : Inter / System
 
 ### Composants
 - Utiliser shadcn/ui exclusivement
 - Mobile-first toujours
+- Respecter le Design System documenté
 
 ---
 
@@ -186,14 +238,19 @@ ANTHROPIC_API_KEY=
 
 ## Skills Disponibles
 
-| Skill | Usage |
-|-------|-------|
-| `/commit` | Commit + push automatique |
-| `/ralph` | Exécution PRD autonome |
-| `/prd` | Génération PRD structuré |
-| `/review` | Code review |
-| `/compound` | Documentation learnings |
-| `/test` | Suite de tests |
+| Skill | Usage | Quand l'utiliser |
+|-------|-------|------------------|
+| `/prd` | Génération PRD structuré avec tests | Toujours en premier |
+| `/ralph` | Implémentation autonome | Après validation PRD |
+| `/test` | Tests E2E (Playwright) | Après implémentation |
+| `/review` | Code review automatique | Avant commit |
+| `/commit` | Commit + push + PR | À la fin |
+| `/compound` | Documentation learnings | Après feature complète |
+
+### Workflow standard
+```
+/prd → /ralph → /test → /review → /commit → /compound
+```
 
 ---
 

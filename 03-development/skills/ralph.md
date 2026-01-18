@@ -19,13 +19,44 @@ Ralph est un agent autonome qui :
 
 1. Lit le PRD depuis `tasks/[prd-name].json`
 2. Implémente chaque User Story dans l'ordre
-3. Valide après chaque story (build + lint)
+3. **Quality Gate** après chaque story :
+   - `npm run typecheck` → doit passer
+   - `npm run lint` → doit passer
+   - Max 3 tentatives de fix par story
 4. Passe à la suivante si OK
 5. Continue jusqu'à complétion
 
+**Note** : Ralph ne fait QUE l'implémentation. Les tests E2E et la review sont des étapes séparées (voir workflow complet ci-dessous).
+
 ---
 
-## Le Ralph Loop
+## Workflow Complet (5 étapes)
+
+Ralph s'intègre dans un workflow plus large :
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   /prd      │────▶│   /ralph    │────▶│   /test     │
+│  (Plan)     │     │  (Implém.)  │     │  (Tests)    │
+└─────────────┘     └──────┬──────┘     └──────┬──────┘
+                          │                    │
+                    ❌ Fix & retry        ❌ Fix & retest
+                          │                    │
+                          ▼                    ▼
+                   ┌─────────────┐     ┌─────────────┐
+                   │   /review   │────▶│   /commit   │
+                   │  (Review)   │     │ (Commit+PR) │
+                   └─────────────┘     └─────────────┘
+```
+
+**Pourquoi séparer ?**
+- Si les tests échouent, tu peux relancer `/ralph` sans tout refaire
+- Chaque étape peut échouer indépendamment
+- Plus facile à debugger
+
+---
+
+## Le Ralph Loop (détail)
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -47,14 +78,16 @@ Ralph est un agent autonome qui :
      └──────┬───────┘                      │
             │                              │
             ▼                              │
-     ┌──────────────┐     ❌ Erreur        │
-     │   Valider    │──────────────────────┤
-     │ (build+lint) │                      │
+     ┌──────────────┐                      │
+     │ QUALITY GATE │                      │
+     │ typecheck    │     ❌ Fix           │
+     │ lint         │──────────────────────┤
+     │ (max 3 try)  │                      │
      └──────┬───────┘                      │
             │ ✅ OK                        │
             ▼                              │
      ┌──────────────┐                      │
-     │ Marquer done │                      │
+     │ Commit story │                      │
      └──────┬───────┘                      │
             │                              │
             ▼                              │
@@ -66,6 +99,7 @@ Ralph est un agent autonome qui :
             ▼
      ┌──────────────┐
      │   TERMINÉ    │
+     │ (pas de push)│
      └──────────────┘
 ```
 
@@ -214,24 +248,38 @@ Implémente un PRD de manière autonome.
 
 ---
 
-## Workflow complet
+## Workflow complet (5 étapes)
 
 ```bash
-# 1. Créer le PRD
+# 1. Créer le PRD (avec tests E2E définis)
 /prd feature-name Description de la feature
 
 # 2. Review et valider le PRD
 # (modifier tasks/feature-name.json si besoin)
 
-# 3. Lancer Ralph
+# 3. Lancer Ralph (implémentation)
 /ralph feature-name
 
-# 4. Review le code généré
-git diff
+# 4. Lancer les tests E2E
+/test feature-name
+# Si échec → fix avec /ralph → re-test
 
-# 5. Commit
+# 5. Review automatique
+/review
+# Si issues → fix → re-review
+
+# 6. Commit + Push + PR
 /commit
 ```
+
+### Pourquoi 5 étapes au lieu de 1 ?
+
+| Approche | Avantage | Inconvénient |
+|----------|----------|--------------|
+| **Monolithique** (`/ralph` fait tout) | Simple | Difficile à debugger si échec |
+| **Séparée** (5 étapes) | Chaque étape peut échouer indépendamment | Plus de commandes |
+
+**Recommandation** : Utiliser les 5 étapes pour les features complexes, le monolithique pour les modifications simples.
 
 ---
 

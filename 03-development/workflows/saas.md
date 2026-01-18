@@ -123,12 +123,23 @@ Puis après validation :
 /ralph auth-system
 ```
 
+### Tests E2E à inclure dans le PRD
+
+```json
+{
+  "tests": [
+    "Inscription nouvel utilisateur fonctionne",
+    "Connexion utilisateur existant fonctionne",
+    "Redirection si non connecté sur /dashboard",
+    "Déconnexion vide la session"
+  ]
+}
+```
+
 ### Validation
 
-- [ ] Inscription fonctionne
-- [ ] Connexion fonctionne
-- [ ] Routes protégées
-- [ ] Déconnexion fonctionne
+- [ ] `/test auth-system` passe (4/4 tests)
+- [ ] `/review` ne montre pas d'issues critiques
 
 ---
 
@@ -168,12 +179,26 @@ src/
         └── result.tsx
 ```
 
+### Tests E2E à inclure
+
+Définir des tests spécifiques à ta feature. Exemple pour génération de contenu :
+
+```json
+{
+  "tests": [
+    "Génération fonctionne avec prompt valide",
+    "Erreur affichée si prompt vide",
+    "Loading state pendant génération",
+    "Résultat affiché correctement"
+  ]
+}
+```
+
 ### Validation
 
-- [ ] Feature fonctionne end-to-end
-- [ ] Gestion d'erreurs
-- [ ] Loading states
-- [ ] Mobile responsive
+- [ ] `/test [feature-name]` passe
+- [ ] `/review` OK
+- [ ] Mobile responsive vérifié
 
 ---
 
@@ -220,12 +245,24 @@ Permettre aux utilisateurs de payer.
 3. Configurer webhooks
 4. Ajouter variables d'env
 
+### Tests E2E à inclure
+
+```json
+{
+  "tests": [
+    "Redirection vers Stripe Checkout fonctionne",
+    "Webhook stripe reçu et traité",
+    "Statut premium reflété dans UI",
+    "Accès features premium autorisé"
+  ]
+}
+```
+
 ### Validation
 
-- [ ] Checkout fonctionne (mode test)
-- [ ] Webhooks reçus
-- [ ] Statut abonnement mis à jour en BDD
-- [ ] Accès features premium
+- [ ] `/test stripe-payments` passe
+- [ ] Webhook testé avec Stripe CLI
+- [ ] `/review` OK (sécurité critique ici)
 
 ---
 
@@ -248,16 +285,21 @@ Stories types :
 - Footer, mentions légales
 - Favicon, OG images
 
-### Tests
+### Tests & Validation
 
-```
-/test
+```bash
+# Tests E2E complets
+/test polish
+
+# Review finale
+/review
 ```
 
-- [ ] Tous les parcours critiques fonctionnent
+- [ ] Tous les parcours critiques testés
 - [ ] Pas d'erreurs console
 - [ ] Mobile OK
 - [ ] Performance OK (LCP < 2.5s)
+- [ ] `/review` ne montre aucune issue
 
 ---
 
@@ -290,14 +332,22 @@ Documenter les learnings pour le prochain projet.
 
 ## Commandes récapitulatives
 
-| Phase | Commandes |
-|-------|-----------|
+| Phase | Workflow complet |
+|-------|------------------|
 | Setup | `npx create-next-app`, config |
-| Auth | `/prd auth` → `/ralph auth` |
-| Core | `/prd feature` → `/ralph feature` |
-| Paiements | `/prd stripe` → `/ralph stripe` |
-| Polish | `/prd polish` → `/ralph polish` → `/test` |
+| Auth | `/prd auth` → `/ralph auth` → `/test auth` → `/review` → `/commit` |
+| Core | `/prd feature` → `/ralph feature` → `/test feature` → `/review` → `/commit` |
+| Paiements | `/prd stripe` → `/ralph stripe` → `/test stripe` → `/review` → `/commit` |
+| Polish | `/prd polish` → `/ralph polish` → `/test polish` → `/review` → `/commit` |
 | Launch | `/deploy` → `/compound` |
+
+### Workflow par défaut (à mémoriser)
+
+```
+/prd → /ralph → /test → /review → /commit
+```
+
+Chaque feature suit ce même cycle. Les tests E2E sont définis dans le PRD et exécutés automatiquement.
 
 ---
 
