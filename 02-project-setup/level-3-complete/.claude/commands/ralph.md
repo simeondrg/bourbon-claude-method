@@ -133,6 +133,31 @@ Format automatique :
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
+## Plugin Officiel Ralph (Alternative)
+
+Pour une implémentation clé-en-main avec stop hook automatique, tu peux utiliser le plugin officiel :
+
+```bash
+# Installer le plugin
+/plugin install ralph-loop@claude-plugins-official
+
+# Usage avec completion promise
+/ralph-loop:ralph-loop "Implement [FEATURE].
+
+Requirements:
+- [Requirement 1]
+- [Requirement 2]
+
+Output <promise>COMPLETE</promise>" --max-iterations 30
+```
+
+Le plugin gère automatiquement :
+- Stop hook qui empêche les exits prématurés
+- Détection du completion promise
+- Max iterations comme safety net
+
+---
+
 ## Limites & Escape Hatches
 
 Inspiré de la technique [Ralph Wiggum](https://awesomeclaude.ai/ralph-wiggum) :

@@ -1,86 +1,238 @@
 # ⌨️ Les Commandes Essentielles
 
-## Commandes de base
+## Commandes Built-in
 
 | Commande | Action |
 |----------|--------|
 | `/help` | Afficher l'aide |
 | `/clear` | Effacer la conversation |
 | `/cost` | Voir la consommation tokens |
-| `/compact` | Compacter le contexte (économise tokens) |
-| `Ctrl+C` | Interrompre Claude |
-| `Escape` | Annuler l'action en cours |
-| `Shift+Enter` | Nouvelle ligne sans envoyer |
+| `/compact [instructions]` | Compacter le contexte avec focus optionnel |
+| `/config` | Voir/modifier la configuration |
+| `/doctor` | Vérifier l'installation Claude Code |
+| `/init` | Initialiser projet avec CLAUDE.md |
+| `/login` | Changer de compte Anthropic |
+| `/logout` | Se déconnecter |
+| `/mcp` | Gérer les serveurs MCP et OAuth |
+| `/memory` | Éditer les fichiers CLAUDE.md |
+| `/model` | Changer de modèle IA |
+| `/permissions` | Voir/modifier les permissions |
+| `/review` | Demander une code review |
+| `/status` | Voir le statut compte et système |
+| `/terminal-setup` | Configurer Shift+Enter (iTerm2/VSCode) |
+| `/usage` | Voir limites et rate limits (abonnements) |
+| `/vim` | Mode vim insert/command |
 
 ---
 
-## Raccourcis clavier
+## Checkpointing (Safety Net)
+
+Claude crée automatiquement des checkpoints à chaque prompt.
+
+| Commande | Action |
+|----------|--------|
+| `Esc+Esc` | Ouvrir le menu rewind |
+| `/rewind` | Ouvrir le menu rewind (alternatif) |
+
+### Types de Rewind
+
+| Type | Description |
+|------|-------------|
+| **Conversation Rewind** | Revenir à un message précédent, garde le code |
+| **Code Rewind** | Annuler les changements de fichiers, garde la conversation |
+| **Full Rewind** | Annuler code ET conversation |
+
+> **Limitations** : Les commandes bash (rm, mv, cp) ne sont pas trackées. Utilise Git pour l'historique permanent.
+
+---
+
+## Raccourcis Clavier
 
 | Raccourci | Action |
 |-----------|--------|
-| `↑` | Rappeler le dernier message |
-| `Tab` | Autocomplétion |
-| `Ctrl+L` | Effacer l'écran |
+| `!` | Préfixe mode bash (exécute directement) |
+| `@` | Mentionner fichiers/dossiers |
+| `\` + Enter | Nouvelle ligne |
+| `Esc` | Interrompre Claude |
+| `Esc+Esc` | Ouvrir menu rewind |
+| `Ctrl+R` | Afficher output/contexte complet |
+| `Ctrl+V` | Coller une image |
+| `Shift+Tab` | Auto-accept ("yolo mode") |
+| `Shift+Tab+Tab` | Mode plan |
+| `Cmd+Esc` / `Ctrl+Esc` | Lancer rapidement depuis IDE |
+| `Cmd+Option+K` / `Alt+Ctrl+K` | Insérer références fichiers |
 
 ---
 
-## Commandes de navigation
+## Commandes CLI
+
+### Démarrage
 
 ```bash
 # Lancer Claude dans un dossier
 cd mon-projet && claude
 
-# Lancer avec un prompt initial
-claude "Explique-moi la structure de ce projet"
+# Avec prompt initial
+claude "Explique-moi la structure"
 
-# Lancer en mode plan (réfléchir avant d'agir)
+# Mode plan (réfléchir avant d'agir)
 claude --plan
+
+# Continuer dernière session
+claude --continue
+```
+
+### Choix du modèle
+
+```bash
+claude --model opus    # Tâches complexes, architecture
+claude --model sonnet  # Défaut, dev quotidien
+claude --model haiku   # Tâches simples, moins cher
+```
+
+### Mode Headless (CI/CD & Automation)
+
+```bash
+# Non-interactif, print et exit
+claude -p "query"
+
+# Output JSON avec métadonnées
+claude -p --output-format json "query"
+
+# Stream JSON temps réel
+claude -p --output-format stream-json "query"
+
+# Continuer conversation non-interactivement
+claude -c -p "query"
+
+# Reprendre session spécifique
+claude --resume <session-id> -p "query"
+
+# Limiter les itérations
+claude --max-turns 3 -p "query"
+
+# Verbose pour debug
+claude --verbose -p "query"
+```
+
+### Exemples Headless
+
+```bash
+# SRE Incident Response
+claude -p "Analyze these errors" \
+  --append-system-prompt "You are an SRE expert" \
+  --output-format json \
+  --allowedTools "Bash,Read,mcp__datadog"
+
+# Security Audit sur PR
+gh pr diff 123 | claude -p \
+  --append-system-prompt "You are a security engineer" \
+  --output-format json \
+  --allowedTools "Read,Grep" > audit.json
+
+# Multi-turn Session
+session_id=$(claude -p "Start review" --output-format json | jq -r '.session_id')
+claude --resume "$session_id" -p "Check compliance"
+claude --resume "$session_id" -p "Generate summary"
 ```
 
 ---
 
-## Les Skills (Slash Commands)
+## Slash Commands Personnalisés
 
-Les skills sont des commandes personnalisées qui automatisent des tâches.
+### Emplacements
 
-### Skills intégrés
+| Location | Scope |
+|----------|-------|
+| `.claude/commands/` | Projet (partagé avec l'équipe) |
+| `~/.claude/commands/` | Personnel (tous tes projets) |
 
+### Structure de base
+
+`.claude/commands/mon-command.md` :
+
+```markdown
+Analyse ce code pour les problèmes de performance :
 ```
-/commit          # Créer un commit conventionnel
-/pr              # Créer une pull request
+
+Usage : `/mon-command`
+
+### Avec Arguments
+
+```markdown
+Fix issue #$ARGUMENTS suivant nos coding standards
 ```
 
-### Skills personnalisés
+Usage : `/fix-issue 123`
 
-Tu peux créer tes propres skills dans `.claude/commands/`.
-
-Exemple : `.claude/commands/deploy.md`
+### Arguments Positionnels
 
 ```markdown
 ---
-name: deploy
-description: "Déployer sur Vercel"
+argument-hint: [pr-number] [priority] [assignee]
+description: Review pull request with priority and assignee
 ---
 
-# Deploy
-
-Déploie le projet sur Vercel.
-
-## Steps
-1. Vérifier que le build passe
-2. Lancer `vercel --prod`
-3. Confirmer le déploiement
+Review PR #$1 with priority $2 and assign to $3.
+Focus on security, performance, and code style.
 ```
 
-Usage : `/deploy`
+Usage : `/review-pr 123 high alice`
+
+### Avec Permissions d'outils
+
+```markdown
+---
+allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
+argument-hint: [message]
+description: Create a git commit
+---
+
+## Context
+
+- Current git status: !`git status`
+- Current git diff: !`git diff HEAD`
+- Current branch: !`git branch --show-current`
+- Recent commits: !`git log --oneline -10`
+
+## Your task
+
+Based on the above changes, create a single git commit.
+```
+
+### Avec Override de Modèle
+
+```markdown
+---
+description: Perform deep code analysis
+model: claude-opus-4-1-20250805
+disable-model-invocation: true
+---
+
+Perform a comprehensive analysis of this codebase focusing on:
+- Architecture patterns
+- Potential scalability issues
+- Security vulnerabilities
+- Performance bottlenecks
+```
+
+### Syntaxes Utiles
+
+| Syntaxe | Usage |
+|---------|-------|
+| `$ARGUMENTS` | Tous les arguments |
+| `$1`, `$2`, `$3` | Arguments positionnels |
+| `` !`command` `` | Exécuter bash avant traitement |
+| `@filename` | Inclure contenu de fichier |
+| `/mcp__server__prompt` | Appeler prompt MCP |
 
 ---
 
-## Gestion du contexte
+## Gestion du Contexte
 
-### Le problème du contexte
+### Le problème
 
-Claude a une limite de contexte (~200k tokens). Sur de longues sessions :
+Claude a ~200k tokens de contexte. Sur longues sessions :
 - Le contexte se remplit
 - Les réponses ralentissent
 - Les coûts augmentent
@@ -89,6 +241,7 @@ Claude a une limite de contexte (~200k tokens). Sur de longues sessions :
 
 ```
 /compact     # Résumer et compacter le contexte
+/compact "Focus sur l'auth system"  # Avec instructions
 /clear       # Effacer complètement (perte d'historique)
 ```
 
@@ -104,8 +257,6 @@ Claude a une limite de contexte (~200k tokens). Sur de longues sessions :
 
 ## Commandes Git intégrées
 
-Claude comprend Git nativement :
-
 ```
 "Montre-moi les changements non commités"
 → Claude exécute git status et git diff
@@ -117,89 +268,9 @@ Claude comprend Git nativement :
 → Claude push avec vérification
 ```
 
-### Le skill /commit (recommandé)
-
-```
-/commit
-```
-
-Claude :
-1. Analyse les changements (`git diff`)
-2. Génère un message conventionnel
-3. Crée le commit
-4. Demande confirmation avant push
-
 ---
 
-## Commandes de fichiers
-
-```
-"Lis le fichier src/app/page.tsx"
-→ Claude affiche le contenu
-
-"Crée un nouveau composant Button"
-→ Claude crée le fichier avec le code
-
-"Modifie la ligne 45 pour..."
-→ Claude édite précisément
-```
-
-### Voir les fichiers modifiés
-
-```
-"Quels fichiers as-tu modifié ?"
-→ Liste des modifications
-
-"Annule les changements sur header.tsx"
-→ Restaure le fichier
-```
-
----
-
-## Commandes de recherche
-
-```
-"Trouve tous les fichiers qui utilisent useState"
-→ Recherche dans le codebase
-
-"Où est définie la fonction generateScript ?"
-→ Localise la définition
-
-"Montre-moi la structure du projet"
-→ Affiche l'arborescence
-```
-
----
-
-## Commandes avancées
-
-### Mode Plan
-
-```bash
-claude --plan
-```
-
-Claude réfléchit et propose un plan AVANT d'agir. Utile pour :
-- Nouvelles features complexes
-- Refactoring important
-- Quand tu n'es pas sûr de l'approche
-
-### Modèle spécifique
-
-```bash
-claude --model opus    # Pour tâches complexes
-claude --model haiku   # Pour tâches simples
-```
-
-### Continuer une session
-
-```bash
-claude --continue      # Reprendre la dernière session
-```
-
----
-
-## Template de commandes quotidiennes
+## Template quotidien
 
 ### Début de journée
 
@@ -226,82 +297,6 @@ claude
 /cost                  # Vérifier consommation
 /commit                # Commiter les changements
 "Résume ce qu'on a fait aujourd'hui"
-```
-
----
-
-## Créer tes propres skills
-
-### Structure d'un skill
-
-`.claude/commands/mon-skill.md` :
-
-```markdown
----
-name: mon-skill
-description: "Description courte"
----
-
-# Titre du Skill
-
-Description de ce que fait le skill.
-
-## Workflow
-
-1. Étape 1
-2. Étape 2
-3. Étape 3
-
-## Exemple
-
-\`\`\`
-Utilisateur: /mon-skill
-Claude: [Ce que Claude fait]
-\`\`\`
-```
-
-### Skills recommandés pour débuter
-
-| Skill | Usage |
-|-------|-------|
-| `/commit` | Commits conventionnels |
-| `/deploy` | Déploiement |
-| `/test` | Lancer les tests |
-| `/review` | Code review |
-
----
-
-## Exercice
-
-### 1. Crée un skill `/bonjour`
-
-```bash
-mkdir -p .claude/commands
-```
-
-`.claude/commands/bonjour.md` :
-
-```markdown
----
-name: bonjour
-description: "Salutation personnalisée"
----
-
-# Bonjour
-
-Salue l'utilisateur et résume le projet actuel.
-
-Inclure :
-- Nom du projet (depuis package.json)
-- Dernière modification
-- Tâches en cours (si AGENTS.md existe)
-```
-
-### 2. Teste
-
-```bash
-claude
-/bonjour
 ```
 
 ---

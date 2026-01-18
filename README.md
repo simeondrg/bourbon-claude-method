@@ -1,151 +1,183 @@
 # 🚀 Bourbon Claude Method
 
-**La méthode complète pour créer n'importe quel projet avec Claude Code.**
+**La méthode complète pour créer n'importe quel projet avec Claude Code - même si tu n'as jamais codé.**
 
-De l'idée à la monétisation, en passant par le développement - un framework éprouvé pour entrepreneurs et développeurs.
-
----
-
-## 🎯 C'est quoi ?
-
-La Bourbon Claude Method est une méthodologie structurée pour utiliser Claude Code (l'IA d'Anthropic) afin de créer des projets complets :
-
-- Sites vitrines
-- Applications web
-- SaaS
-- Applications mobiles
-- APIs et backends
-
-**Créée par [Siméon / Bourbon Media](https://bourbonmedia.fr)** - Entrepreneur digital à La Réunion.
+De l'idée au site en ligne, en passant par le développement - un assistant qui te guide pas à pas.
 
 ---
 
-## 📚 Structure du Framework
+## ✨ C'est pour qui ?
+
+- **Entrepreneurs** qui veulent créer leur site/app sans coder
+- **Créateurs** qui veulent lancer leurs projets rapidement
+- **Débutants** qui veulent apprendre en faisant
+- **Développeurs** qui veulent accélérer leur workflow
+
+---
+
+## 🎯 En 3 minutes, tu auras :
+
+1. ✅ Tous les outils installés automatiquement
+2. ✅ Un assistant qui te pose les bonnes questions
+3. ✅ Ton projet créé et configuré
+4. ✅ Ta première page visible
+5. ✅ Ton site en ligne !
+
+---
+
+## 🚀 Installation (1 minute)
+
+### Sur Mac ou Linux
+
+```bash
+# Clone le repo
+git clone https://github.com/simeondrg/bourbon-claude-method.git
+
+# Lance l'installation
+cd bourbon-claude-method
+./setup.sh
+```
+
+### Sur Windows
+
+```powershell
+# Clone le repo
+git clone https://github.com/simeondrg/bourbon-claude-method.git
+
+# Ouvre PowerShell en admin et lance
+cd bourbon-claude-method
+.\setup.ps1
+```
+
+Le script installe automatiquement :
+- ✅ Node.js (si pas installé)
+- ✅ Git (si pas installé)
+- ✅ GitHub CLI (si pas installé)
+- ✅ Claude Code (si pas installé)
+- ✅ Les commandes Bourbon
+
+---
+
+## 🎬 Créer ton premier projet (5 minutes)
+
+```bash
+# Crée un dossier pour ton projet
+mkdir mon-super-projet
+cd mon-super-projet
+
+# Lance Claude Code
+claude
+
+# Tape la commande magique
+/start
+```
+
+**C'est tout !** L'assistant te guide pour le reste.
+
+---
+
+## 🔄 Reprendre un projet existant
+
+Tu peux quitter à tout moment. Pour reprendre :
+
+```bash
+cd mon-super-projet
+claude
+/start
+```
+
+L'assistant se souvient où tu en étais et reprend automatiquement.
+
+---
+
+## 📦 Types de projets supportés
+
+| Type | Description | Exemple |
+|------|-------------|---------|
+| 🖼️ **Site Vitrine** | Présenter ton activité | Restaurant, Portfolio |
+| 🛠️ **Application Web** | Outil avec connexion utilisateur | Dashboard, Réservations |
+| 💰 **SaaS** | Logiciel avec abonnement | Outil de gestion, Formation |
+| 📱 **App Mobile** | Application smartphone | App de livraison |
+
+---
+
+## 🎓 Comment ça marche ?
+
+### L'assistant te guide en 5 étapes :
+
+```
+ÉTAPE 1 : QUESTIONS (2 min)
+└─ Je comprends ton projet
+
+ÉTAPE 2 : CRÉATION (3 min)
+└─ Je crée la structure automatiquement
+
+ÉTAPE 3 : PERSONNALISATION (10 min)
+└─ On modifie ensemble le contenu
+
+ÉTAPE 4 : MISE EN LIGNE (2 min)
+└─ Ton site est accessible à tous !
+
+ÉTAPE 5 : ÉVOLUTION (continu)
+└─ Tu me demandes des modifications quand tu veux
+```
+
+---
+
+## 💬 Commandes disponibles
+
+Une fois dans un projet :
+
+| Commande | Description |
+|----------|-------------|
+| `/start` | Démarrer ou reprendre le projet |
+| `/recap` | Voir l'état du projet |
+| `/help` | Aide et suggestions |
+| `/commit` | Sauvegarder ton travail |
+| `/deploy` | Mettre en ligne |
+
+---
+
+## 🗂️ Structure du Framework
 
 ```
 bourbon-claude-method/
 │
-├── 00-getting-started/     # Installation et premiers pas
-├── 01-idea-to-plan/        # De l'idée au business plan
-├── 02-project-setup/       # Configuration projet (3 niveaux)
-├── 03-development/         # Workflows de développement
-├── 04-launch/              # Déploiement et lancement
-├── 05-monetize/            # Monétisation et vente
+├── setup.sh               # Installation automatique
+├── templates/
+│   ├── commands/          # Commandes de l'assistant
+│   └── projects/          # Templates de projets
 │
-└── premium-course/         # Contenu cours payant (aperçu)
+├── 00-getting-started/    # Guides d'installation
+├── 01-idea-to-plan/       # Valider et planifier ton idée
+├── 02-project-setup/      # Configuration par niveau
+├── 03-development/        # Workflows de développement
+├── 04-launch/             # Déploiement
+├── 05-monetize/           # Monétisation
+│
+└── premium-course/        # Cours vidéo (bientôt)
 ```
 
 ---
 
-## 🎓 Les 6 Modules
+## 📚 Pour les développeurs
 
-### Module 0 : Getting Started
-> *"Installer Claude Code et faire sa première conversation productive"*
+Si tu veux comprendre comment ça marche sous le capot :
 
-- Installation sur Mac/Windows/Linux
-- Configuration optimale
-- Premier projet en 10 minutes
-- Les commandes essentielles
-- **Workflow Git** (création repo, commits, push)
+### Les 3 niveaux de configuration
 
-### Module 1 : Idea to Plan
-> *"Transformer une idée vague en plan d'action concret"*
+| Niveau | Usage | Complexité |
+|--------|-------|------------|
+| 🟢 Minimal | Landing page | CLAUDE.md seulement |
+| 🟡 Standard | Web app | + AGENTS.md + commandes |
+| 🔴 Complete | SaaS | + hooks + subagents |
 
-- Valider son idée avec Claude
-- Générer un Business Model Canvas
-- Créer un business plan complet
-- Rédiger les spécifications techniques
+### Documentation avancée
 
-### Module 2 : Project Setup
-> *"Configurer son projet selon sa complexité"*
-
-**3 niveaux disponibles :**
-
-| Niveau | Pour qui | Exemples |
-|--------|----------|----------|
-| 🟢 Minimal | Projets rapides | Landing page, site vitrine |
-| 🟡 Standard | Apps moyennes | MVP, app web simple |
-| 🔴 Complete | Projets complexes | SaaS, app mobile |
-
-### Module 3 : Development
-> *"Le workflow de développement adapté à chaque type de projet"*
-
-- Workflows par type de projet
-- Skills Claude Code (commit, ralph, prd...)
-- Patterns et bonnes pratiques
-- Gestion des erreurs
-
-### Module 4 : Launch
-> *"Déployer et lancer son projet"*
-
-- Déploiement Vercel (web)
-- Déploiement stores (mobile)
-- Configuration domaine
-- Analytics et monitoring
-
-### Module 5 : Monetize
-> *"Transformer son projet en business"*
-
-- Stratégies de pricing
-- Configuration Stripe
-- Marketing de lancement
-- Acquérir ses premiers clients
-
----
-
-## 🚀 Quick Start
-
-### 1. Installer Claude Code
-
-```bash
-# macOS / Linux
-curl -fsSL https://claude.ai/install.sh | sh
-
-# Windows (PowerShell)
-irm https://claude.ai/install.ps1 | iex
-```
-
-### 2. Cloner ce repo
-
-```bash
-git clone https://github.com/simeondrg/bourbon-claude-method.git
-cd bourbon-claude-method
-```
-
-### 3. Choisir son niveau
-
-```bash
-# Copier le niveau adapté à son projet
-cp -r 02-project-setup/level-2-standard/* mon-projet/
-```
-
-### 4. Lancer Claude Code
-
-```bash
-cd mon-projet
-claude
-```
-
----
-
-## 📊 Quel niveau choisir ?
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    CHOISIR SON NIVEAU                       │
-└─────────────────────────────────────────────────────────────┘
-
-Tu veux faire quoi ?
-        │
-        ├─── Landing page / Site vitrine simple
-        │           └──→ 🟢 LEVEL 1 - MINIMAL
-        │
-        ├─── App web / MVP / Portfolio dynamique
-        │           └──→ 🟡 LEVEL 2 - STANDARD
-        │
-        └─── SaaS / App mobile / Projet complexe
-                    └──→ 🔴 LEVEL 3 - COMPLETE
-```
+- [Commandes essentielles](00-getting-started/03-essential-commands.md)
+- [Configuration avancée](00-getting-started/05-advanced-config.md)
+- [Skill Ralph (loop autonome)](03-development/skills/ralph.md)
+- [Workflow SaaS](03-development/workflows/saas.md)
 
 ---
 
@@ -153,7 +185,7 @@ Tu veux faire quoi ?
 
 ### Les 4 principes Bourbon
 
-1. **🎯 Clarté avant code** - Toujours planifier avant de coder
+1. **🎯 Clarté avant code** - Toujours comprendre avant de construire
 2. **🔄 Itération rapide** - Mieux vaut imparfait et livré que parfait et jamais fini
 3. **📚 Capitalisation** - Chaque projet rend le suivant plus facile
 4. **💰 Business first** - Le code sert le business, pas l'inverse
@@ -161,16 +193,16 @@ Tu veux faire quoi ?
 ### Inspiré de
 
 - [Ralph Wiggum Technique](https://awesomeclaude.ai/ralph-wiggum) - Loop AI itératif
-- [Compound Engineering](https://www.anthropic.com) - Capitaliser sur les learnings
-- Vibe Coding - Itération rapide, qualité production
+- [Vibe Coding Guide](https://awesomeclaude.ai/vibe-coding-guide) - AI-directed development
+- [Awesome Claude](https://awesomeclaude.ai) - Ressources communautaires
 
 ---
 
-## 🎁 Bonus : Cours Premium
+## 🎁 Cours Premium (bientôt)
 
 Le repo est gratuit et complet. Pour aller plus loin :
 
-**[Bourbon Claude Masterclass](https://bourbonmedia.fr/masterclass)** (bientôt disponible)
+**[Bourbon Claude Masterclass](https://bourbonmedia.fr/masterclass)**
 
 - 📹 Vidéos tutoriels pas-à-pas
 - 🎯 Projets guidés de A à Z
