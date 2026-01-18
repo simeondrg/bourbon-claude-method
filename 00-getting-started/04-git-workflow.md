@@ -144,13 +144,19 @@ git commit -m "chore: mise à jour dépendances"
 
 ## Avec Claude Code
 
-### Commit automatique
+### Commit + Push automatique
 
 ```
 /commit
 ```
 
-Claude analyse les changements et génère un message approprié.
+Claude :
+1. Analyse les changements
+2. Génère un message conventionnel
+3. Exécute le commit
+4. **Push automatiquement sur GitHub**
+
+Tu n'as plus besoin de faire `git push` manuellement.
 
 ### Après chaque /ralph
 
@@ -160,7 +166,7 @@ Claude analyse les changements et génère un message approprié.
 
 # Quand terminé :
 /commit
-git push
+# → commit + push automatique !
 ```
 
 ### Workflow recommandé
@@ -168,9 +174,8 @@ git push
 ```
 1. /prd feature-name
 2. /ralph feature-name
-3. /commit
-4. git push
-5. /compound feature-name
+3. /commit              ← push inclus automatiquement
+4. /compound feature-name
 ```
 
 ---
@@ -282,6 +287,5 @@ git commit --amend --no-edit
 - [ ] `git add . && git commit && git push`
 
 ### Fin de feature
-- [ ] `/commit` avec message descriptif
-- [ ] `git push`
+- [ ] `/commit` (push automatique inclus)
 - [ ] Vérifier sur GitHub que c'est bien là

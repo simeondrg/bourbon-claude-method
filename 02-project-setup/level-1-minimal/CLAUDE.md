@@ -56,11 +56,10 @@ git init
 gh repo create [nom-projet] --private --source=. --push
 ```
 
-### Après chaque tâche
+### Après chaque tâche (automatique)
+Claude exécute automatiquement après chaque modification :
 ```bash
-git add .
-git commit -m "type: description"
-git push
+git add . && git commit -m "type: description" && git push
 ```
 
 ### Types de commit

@@ -91,17 +91,15 @@ git init
 gh repo create [nom-projet] --private --source=. --push
 ```
 
-### Après chaque feature/fix
-```bash
-git add .
-git commit -m "type(scope): description"
-git push
+### Après chaque feature/fix (automatique)
+Claude exécute automatiquement :
+```
+/commit  → commit + push automatique
 ```
 
-### Ou avec Claude
-```
-/commit
-git push
+Ou manuellement :
+```bash
+git add . && git commit -m "type(scope): description" && git push
 ```
 
 ---

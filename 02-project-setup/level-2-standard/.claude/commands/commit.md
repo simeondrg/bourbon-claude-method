@@ -35,7 +35,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 2. Analyser le diff : `git diff`
 3. Proposer un message adapté
 4. Demander confirmation
-5. Créer le commit
+5. Exécuter : `git add . && git commit`
+6. **Push automatique : `git push`**
 
 ## Règles
 
@@ -43,3 +44,4 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - Description < 50 caractères
 - Scope optionnel mais recommandé
 - Pas de point final dans la description
+- **Toujours push après commit**

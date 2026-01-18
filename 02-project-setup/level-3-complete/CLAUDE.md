@@ -144,21 +144,16 @@ git init
 gh repo create [nom-projet] --private --source=. --push
 ```
 
-### Après chaque feature (OBLIGATOIRE)
-```bash
-# Après /ralph complété :
-/commit
-git push
-```
+### Après chaque feature (AUTOMATIQUE)
+`/commit` exécute automatiquement : commit + push
 
 ### Workflow complet
 ```
 1. /prd feature-name → crée PRD
 2. Valider le plan
 3. /ralph feature-name → implémente
-4. /commit → commit conventionnel
-5. git push → sauvegarde GitHub
-6. /compound feature-name → documente learnings
+4. /commit → commit + push automatique
+5. /compound feature-name → documente learnings
 ```
 
 ---
@@ -193,7 +188,7 @@ ANTHROPIC_API_KEY=
 
 | Skill | Usage |
 |-------|-------|
-| `/commit` | Commit conventionnel |
+| `/commit` | Commit + push automatique |
 | `/ralph` | Exécution PRD autonome |
 | `/prd` | Génération PRD structuré |
 | `/review` | Code review |

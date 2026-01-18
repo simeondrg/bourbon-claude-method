@@ -19,6 +19,7 @@ Ou avec message :
 1. Analyse les changements (`git diff`)
 2. Génère un message de commit conventionnel
 3. Exécute le commit
+4. **Push automatiquement sur GitHub**
 
 ---
 
@@ -65,7 +66,7 @@ refactor(api): simplification routes utilisateur
 ```markdown
 # .claude/commands/commit.md
 
-Crée un commit conventionnel pour les changements actuels.
+Crée un commit conventionnel et push sur GitHub.
 
 ## Étapes
 
@@ -73,7 +74,8 @@ Crée un commit conventionnel pour les changements actuels.
 2. Analyse les changements
 3. Détermine le type approprié
 4. Génère un message clair et concis
-5. Exécute le commit
+5. Exécute `git add .` puis `git commit`
+6. Exécute `git push` automatiquement
 
 ## Règles
 
@@ -81,4 +83,5 @@ Crée un commit conventionnel pour les changements actuels.
 - Description < 50 caractères
 - Corps si changements complexes
 - Toujours ajouter Co-Authored-By
+- Toujours push après commit (sauf si pas de remote)
 ```

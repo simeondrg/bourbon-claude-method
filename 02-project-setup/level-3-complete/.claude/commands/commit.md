@@ -43,7 +43,8 @@ Exécute un commit Git avec la convention de messages suivante.
 2. Analyser les changements (git diff --staged ou git diff)
 3. Proposer un message de commit approprié
 4. Exécuter le commit avec `--no-verify` si les hooks bloquent sur du formatting mineur
-5. Afficher le résultat
+5. **Push automatiquement sur GitHub : `git push`**
+6. Afficher le résultat
 
 ## Exemple
 
