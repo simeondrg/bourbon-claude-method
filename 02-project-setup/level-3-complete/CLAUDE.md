@@ -136,6 +136,33 @@ npm run typecheck  # Types
 
 ---
 
+## Workflow Git
+
+### Setup initial (une fois)
+```bash
+git init
+gh repo create [nom-projet] --private --source=. --push
+```
+
+### Après chaque feature (OBLIGATOIRE)
+```bash
+# Après /ralph complété :
+/commit
+git push
+```
+
+### Workflow complet
+```
+1. /prd feature-name → crée PRD
+2. Valider le plan
+3. /ralph feature-name → implémente
+4. /commit → commit conventionnel
+5. git push → sauvegarde GitHub
+6. /compound feature-name → documente learnings
+```
+
+---
+
 ## Variables d'environnement
 
 ```bash

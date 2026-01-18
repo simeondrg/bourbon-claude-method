@@ -83,6 +83,29 @@ npm run typecheck  # Vérification types
 
 ---
 
+## Workflow Git
+
+### Setup initial (une fois)
+```bash
+git init
+gh repo create [nom-projet] --private --source=. --push
+```
+
+### Après chaque feature/fix
+```bash
+git add .
+git commit -m "type(scope): description"
+git push
+```
+
+### Ou avec Claude
+```
+/commit
+git push
+```
+
+---
+
 ## Variables d'environnement
 
 ```bash

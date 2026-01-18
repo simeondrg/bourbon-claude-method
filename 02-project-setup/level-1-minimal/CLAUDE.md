@@ -48,6 +48,29 @@ vercel --prod
 
 ---
 
+## Workflow Git
+
+### Setup initial (une fois)
+```bash
+git init
+gh repo create [nom-projet] --private --source=. --push
+```
+
+### Après chaque tâche
+```bash
+git add .
+git commit -m "type: description"
+git push
+```
+
+### Types de commit
+- `feat` : nouvelle fonctionnalité
+- `fix` : correction
+- `style` : CSS/design
+- `docs` : documentation
+
+---
+
 ## Ce que Claude doit faire
 
 - Garder le code simple et lisible

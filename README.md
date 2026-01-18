@@ -46,6 +46,7 @@ bourbon-claude-method/
 - Configuration optimale
 - Premier projet en 10 minutes
 - Les commandes essentielles
+- **Workflow Git** (création repo, commits, push)
 
 ### Module 1 : Idea to Plan
 > *"Transformer une idée vague en plan d'action concret"*
