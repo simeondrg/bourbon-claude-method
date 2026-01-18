@@ -248,10 +248,10 @@ Implémente un PRD de manière autonome.
 
 ---
 
-## Workflow complet (5 étapes)
+## Workflow complet (6 étapes)
 
 ```bash
-# 1. Créer le PRD (avec tests E2E définis)
+# 1. Créer le PRD (avec tests définis)
 /prd feature-name Description de la feature
 
 # 2. Review et valider le PRD
@@ -260,7 +260,7 @@ Implémente un PRD de manière autonome.
 # 3. Lancer Ralph (implémentation)
 /ralph feature-name
 
-# 4. Lancer les tests E2E
+# 4. Lancer les tests
 /test feature-name
 # Si échec → fix avec /ralph → re-test
 
@@ -270,16 +270,46 @@ Implémente un PRD de manière autonome.
 
 # 6. Commit + Push + PR
 /commit
+
+# 7. (Optionnel) Documenter les learnings
+/compound feature-name
 ```
 
-### Pourquoi 5 étapes au lieu de 1 ?
+### Fast-Track (micro-changements)
+
+Pour les changements triviaux (< 5 lignes, 1 fichier, pas d'impact logique) :
+
+```
+Utilisateur: "Fix le typo dans le header"
+Claude: [modifie directement] → /commit
+```
+
+**Ne pas utiliser le fast-track si** :
+- Plus d'un fichier modifié
+- Impact sur la logique métier
+- Nouveau code (pas juste une correction)
+
+### Rollback (bug en prod)
+
+```bash
+git log --oneline -10          # Identifier le commit
+git revert <commit-hash>       # Revert
+git push origin main           # Push
+/prd fix-{bug-name}            # Créer PRD pour le fix
+```
+
+### Pourquoi 6 étapes au lieu de 1 ?
 
 | Approche | Avantage | Inconvénient |
 |----------|----------|--------------|
-| **Monolithique** (`/ralph` fait tout) | Simple | Difficile à debugger si échec |
-| **Séparée** (5 étapes) | Chaque étape peut échouer indépendamment | Plus de commandes |
+| **Monolithique** | Simple | Difficile à debugger si échec |
+| **Séparée** | Chaque étape peut échouer indépendamment | Plus de commandes |
+| **Fast-Track** | Rapide pour les micro-changements | Risque si mal utilisé |
 
-**Recommandation** : Utiliser les 5 étapes pour les features complexes, le monolithique pour les modifications simples.
+**Recommandation** :
+- Features complexes → 6 étapes
+- Modifications moyennes → 5 étapes (sans /compound)
+- Micro-changements → Fast-Track
 
 ---
 

@@ -335,19 +335,42 @@ Documenter les learnings pour le prochain projet.
 | Phase | Workflow complet |
 |-------|------------------|
 | Setup | `npx create-next-app`, config |
-| Auth | `/prd auth` → `/ralph auth` → `/test auth` → `/review` → `/commit` |
-| Core | `/prd feature` → `/ralph feature` → `/test feature` → `/review` → `/commit` |
-| Paiements | `/prd stripe` → `/ralph stripe` → `/test stripe` → `/review` → `/commit` |
+| Auth | `/prd auth` → `/ralph auth` → `/test auth` → `/review` → `/commit` → `/compound` |
+| Core | `/prd feature` → `/ralph feature` → `/test feature` → `/review` → `/commit` → `/compound` |
+| Paiements | `/prd stripe` → `/ralph stripe` → `/test stripe` → `/review` → `/commit` → `/compound` |
 | Polish | `/prd polish` → `/ralph polish` → `/test polish` → `/review` → `/commit` |
 | Launch | `/deploy` → `/compound` |
 
 ### Workflow par défaut (à mémoriser)
 
 ```
-/prd → /ralph → /test → /review → /commit
+/prd → /ralph → /test → /review → /commit → /compound (optionnel)
 ```
 
-Chaque feature suit ce même cycle. Les tests E2E sont définis dans le PRD et exécutés automatiquement.
+Chaque feature suit ce même cycle. Les tests sont définis dans le PRD et exécutés automatiquement.
+
+### Fast-Track (micro-changements)
+
+Pour les changements triviaux (typo, couleur, texte) :
+
+```
+[modifie directement] → /commit
+```
+
+### Rollback (bug en prod)
+
+```bash
+git revert <commit-hash> && git push origin main
+/prd fix-{bug-name}
+```
+
+### Types de Tests
+
+| Type | Outil | Usage |
+|------|-------|-------|
+| E2E | Playwright | Features UI |
+| Unitaires | Vitest | Logique métier |
+| Intégration | Vitest + MSW | API endpoints |
 
 ---
 

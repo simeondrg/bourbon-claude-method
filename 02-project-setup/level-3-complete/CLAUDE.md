@@ -74,9 +74,56 @@ Valide ce plan ? (oui/non/modifier)
 ### Workflow résumé
 
 ```
-/prd → /ralph → /test → /review → /commit
+/prd → /ralph → /test → /review → /commit → /compound (optionnel)
          ↑         ↑
          └─ fix ───┘
+```
+
+### Fast-Track (micro-changements)
+
+Pour les changements triviaux (< 5 lignes, 1 fichier) :
+
+```
+Utilisateur: "Fix le typo"
+Claude: [modifie directement] → /commit
+```
+
+**Critères** : typo, couleur, texte, pas d'impact logique métier.
+
+⚠️ En cas de doute → workflow complet.
+
+### Rollback (bug en prod)
+
+```bash
+git log --oneline -10          # Identifier le commit
+git revert <commit-hash>       # Revert
+git push origin main           # Push
+/prd fix-{bug-name}            # Créer PRD pour le fix
+```
+
+### Étape 6 (optionnelle) : COMPOUND
+
+```
+/compound {feature-name}
+```
+
+Documente les learnings dans AGENTS.md après une feature significative.
+
+---
+
+## Types de Tests
+
+| Type | Outil | Usage |
+|------|-------|-------|
+| **E2E** | Playwright | Features UI, parcours utilisateur |
+| **Unitaires** | Vitest | Logique métier, fonctions |
+| **Intégration** | Vitest + MSW | API endpoints |
+
+Dans le PRD :
+```
+🧪 Tests :
+- E2E: [scénarios Playwright]
+- Unit: [fonctions à tester] (optionnel)
 ```
 
 ---
