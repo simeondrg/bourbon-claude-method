@@ -3,7 +3,7 @@ name: commit
 description: "Commit conventionnel avec message structuré"
 ---
 
-# Commit Conventionnel VuVenu
+# Commit Conventionnel
 
 Exécute un commit Git avec la convention de messages suivante.
 
@@ -26,16 +26,13 @@ Exécute un commit Git avec la convention de messages suivante.
 - `test` : Ajout/modification de tests
 - `chore` : Maintenance (deps, config, etc.)
 
-### Scopes VuVenu
+### Scopes (à adapter selon projet)
 - `auth` : Authentification
-- `onboarding` : Onboarding utilisateur
-- `dashboard` : Dashboard client
-- `scripts` : Générateur de scripts vidéo
-- `campaigns` : Générateur de campagnes Meta
-- `stripe` : Paiements et abonnements
 - `api` : Routes API
 - `ui` : Composants UI
 - `db` : Base de données / migrations
+- `config` : Configuration
+- `deps` : Dépendances
 
 ## Workflow
 

@@ -18,29 +18,38 @@ De l'idée au site en ligne, en passant par le développement - un assistant qui
 ## Workflow Principal
 
 ```
-/prd → /ralph → /test → /review → /commit → /compound (optionnel)
-         ↑         ↑
-         └─ fix ───┘
+/prd → /check-stories → /ralph → /test → /security → /review → /commit
+                           │                                      │
+                           ├── 📱 Notifications mobile (ntfy.sh)  │
+                           └── ← fix loop ─────────────────────────┘
+                                                                   ↓
+                                                         /compound (optionnel)
+                                                         /qa (si deploy)
 ```
 
 | Skill | Description |
 |-------|-------------|
-| `/prd` | Génère un PRD structuré avec User Stories |
-| `/ralph` | Implémentation autonome avec quality gates |
+| `/prd` | Génère un PRD structuré avec 7 catégories d'edge cases |
+| `/check-stories` | Validation pre-build (sizing, dépendances, critères) |
+| `/ralph` | Implémentation autonome avec notifications + archive |
 | `/test` | Tests complets (typecheck, lint, build, E2E) |
+| `/security` | Scan secrets, vulnérabilités deps, patterns OWASP |
 | `/review` | Code review automatique avec scoring |
 | `/commit` | Commit conventionnel + push |
-| `/compound` | Documente les learnings |
+| `/compound` | Documente les learnings dans AGENTS.md |
+| `/extract` | Extrait un skill depuis un debug (Claudeception) |
+| `/qa` | Test-and-break post-deploy |
+| `/notify` | Configuration notifications mobile |
 
 ---
 
 ## Les 3 Niveaux
 
-| Niveau | Pour qui | Durée | Skills |
-|--------|----------|-------|--------|
-| **Level 1 - Minimal** | Landing pages, sites vitrines | 1-3 jours | Aucun |
-| **Level 2 - Standard** | Apps web, MVPs | 1-4 semaines | `/commit`, `/review` |
-| **Level 3 - Complete** | SaaS, apps complexes | 1-6 mois | Tous les skills |
+| Niveau | Pour qui | Skills |
+|--------|----------|--------|
+| **Level 1 - Minimal** | Landing pages, sites vitrines | Aucun |
+| **Level 2 - Standard** | Apps web, MVPs | `/commit`, `/review` |
+| **Level 3 - Complete** | SaaS, apps complexes | Tous (14 skills) |
 
 ---
 
@@ -95,16 +104,18 @@ L'assistant te guide pour le reste.
 ```
 bourbon-claude-method/
 ├── setup.sh                    # Installation automatique
-├── templates/commands/         # Commandes de l'assistant
 ├── 00-getting-started/         # Guides d'installation
 ├── 01-idea-to-plan/            # Valider et planifier ton idée
 ├── 02-project-setup/           # Configuration par niveau
 │   ├── level-1-minimal/        # CLAUDE.md seulement
 │   ├── level-2-standard/       # + AGENTS.md + /commit + /review
-│   └── level-3-complete/       # + Tous les skills
+│   └── level-3-complete/       # Setup complet (14 skills)
+│       ├── .claude/
+│       │   ├── SKILLS-INDEX.md # Matrice auto-application
+│       │   ├── commands/       # 14 skills (prd, ralph, test...)
+│       │   └── skills/         # Template pour nouveaux skills
+│       └── tasks/              # PRDs + archive
 ├── 03-development/             # Workflows de développement
-│   ├── workflows/              # Par type de projet
-│   └── skills/                 # Documentation des skills
 ├── 04-launch/                  # Déploiement
 └── 05-monetize/                # Monétisation
 ```

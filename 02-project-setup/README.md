@@ -66,12 +66,13 @@ Ton projet c'est quoi ?
 
 | Aspect | Minimal | Standard | Complete |
 |--------|---------|----------|----------|
-| **Fichiers config** | CLAUDE.md | + AGENTS.md | + Skills + PRD |
-| **Workflow** | Conversation | + Commits structurés | + Ralph Loop |
-| **Planning** | Aucun | Basique | PRD détaillés |
-| **Tests** | Aucun | Manuels | Automatisés |
+| **Fichiers config** | CLAUDE.md | + AGENTS.md | + Skills + PRD + SKILLS-INDEX |
+| **Workflow** | Conversation | + Commits structurés | + Ralph Loop + Notifications |
+| **Planning** | Aucun | Basique | PRD avec edge cases |
+| **Validation** | Aucune | /review | /check-stories + /security |
+| **Tests** | Aucun | Manuels | Automatisés + /qa post-deploy |
 | **Déploiement** | Manuel | Semi-auto | CI/CD |
-| **Documentation** | Aucune | README | Complète |
+| **Documentation** | Aucune | README | + /compound + /extract |
 | **Temps setup** | 5 min | 15 min | 30 min |
 
 ---
@@ -90,9 +91,13 @@ Demande → Claude code → /review → /commit
 
 ### Level 3 - Complete
 ```
-/prd → /ralph → /test → /review → /commit → /compound (optionnel)
-         ↑         ↑
-         └─ fix ───┘
+/prd → /check-stories → /ralph → /test → /security → /review → /commit
+                           │                                      │
+                           ├── 📱 Notifications mobile             │
+                           └── ← fix loop ─────────────────────────┘
+                                                                   ↓
+                                                         /compound (optionnel)
+                                                         /qa (si deploy)
 ```
 
 ---
@@ -175,19 +180,28 @@ level-3-complete/
 ├── CLAUDE.md              # Instructions complètes
 ├── AGENTS.md              # Learnings structurés
 ├── .claude/
-│   └── commands/
-│       ├── commit.md      # Commits conventionnels
-│       ├── ralph.md       # Ralph Loop
-│       ├── prd.md         # Générateur PRD
-│       ├── test.md        # Tests complets
-│       ├── review.md      # Code review avec scoring
-│       ├── compound.md    # Documentation learnings
-│       ├── browser.md     # Automatisation navigateur
-│       ├── cost-check.md  # Suivi consommation tokens
-│       ├── lighthouse.md  # Audit performance
-│       └── push.md        # Git push
+│   ├── SKILLS-INDEX.md    # Matrice auto-application skills
+│   ├── commands/
+│   │   ├── prd.md         # Générateur PRD avec edge cases
+│   │   ├── check-stories.md # Validation pre-build
+│   │   ├── ralph.md       # Ralph Loop + notifications + archive
+│   │   ├── test.md        # Tests complets
+│   │   ├── security.md    # Scan secrets & vulnérabilités
+│   │   ├── review.md      # Code review avec scoring
+│   │   ├── commit.md      # Commits conventionnels
+│   │   ├── compound.md    # Documentation learnings
+│   │   ├── extract.md     # Extraction skills (Claudeception)
+│   │   ├── qa.md          # Test-and-break post-deploy
+│   │   ├── notify.md      # Notifications mobile (ntfy.sh)
+│   │   ├── browser.md     # Automatisation navigateur
+│   │   ├── cost-check.md  # Suivi consommation tokens
+│   │   └── lighthouse.md  # Audit performance
+│   └── skills/
+│       ├── README.md      # Guide création skills
+│       └── skill-template.md # Template pour nouveaux skills
 ├── tasks/
-│   └── prd-template.json  # Template PRD
+│   ├── prd-template.json  # Template PRD
+│   └── archive/           # PRDs terminés (créé automatiquement)
 └── reference/
     └── DESIGN-SYSTEM.template.md
 ```
