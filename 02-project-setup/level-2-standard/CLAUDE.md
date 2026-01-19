@@ -1,5 +1,32 @@
 # CLAUDE.md - [Nom du Projet]
 
+---
+
+## ⛔ RÈGLE IMPORTANTE - LIRE EN PREMIER
+
+**TOUJOURS valider avant de coder.**
+
+Quand l'utilisateur demande une modification :
+
+1. **Analyser** ce qui est demandé
+2. **Présenter le plan** (fichiers à modifier, changements prévus)
+3. **Attendre validation** de l'utilisateur
+4. **Implémenter** seulement après "oui" ou "go"
+
+**POURQUOI ?** Coder sans validation peut :
+- Mal interpréter la demande
+- Modifier les mauvais fichiers
+- Perdre du temps sur une mauvaise direction
+
+**Format de validation :**
+```
+📋 Modification : {ce que je vais faire}
+📁 Fichiers : {liste des fichiers}
+✅ Valide ? (oui/non)
+```
+
+---
+
 ## Projet
 
 **[Nom]** - [Description en 2-3 phrases]

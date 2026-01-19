@@ -1,5 +1,28 @@
 # CLAUDE.md - [Nom du Projet]
 
+---
+
+## ⛔ INTERDICTION ABSOLUE - LIRE EN PREMIER
+
+**NE JAMAIS CODER DIRECTEMENT.**
+
+Quand l'utilisateur valide un plan ou dit "exécute", "implémente", "fais-le", "go" :
+
+1. **INVOQUER `/ralph {feature-name}`** - PAS coder soi-même
+2. Ralph gère : branche → code → validation → commit → PR
+
+**POURQUOI ?** L'action directe (écrire du code) contourne :
+- La création de branche feature
+- Les commits atomiques par story
+- La PR pour review
+- La traçabilité Git
+
+**SI TU ES TENTÉ DE CODER DIRECTEMENT → STOP → INVOQUE LE SKILL**
+
+Cette règle est NON-NÉGOCIABLE. Aucune exception.
+
+---
+
 ## Projet
 
 **[Nom]** est un [type de produit] qui permet à [cible] de [bénéfice principal].
