@@ -42,6 +42,9 @@ Exécute un commit Git avec la convention de messages suivante.
 4. Exécuter le commit avec `--no-verify` si les hooks bloquent sur du formatting mineur
 5. **Push automatiquement sur GitHub : `git push`**
 6. Afficher le résultat
+7. **Si sur une feature branch** : Demander "Merger sur main ? (oui/non)"
+   - Si oui → `git checkout main && git merge <branch> && git push`
+   - Si non → Laisser sur la branche, informer l'utilisateur
 
 ## Exemple
 
