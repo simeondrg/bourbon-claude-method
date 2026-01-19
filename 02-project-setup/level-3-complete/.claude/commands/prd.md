@@ -24,40 +24,113 @@ Génère un PRD (Product Requirements Document) structuré pour une feature, pr�
 /prd [nom-feature] [description]
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  1. ANALYSE CODEBASE                                │
+│  1. DISCOVERY (BMAD Method)                         │
+│     - Poser 1 question à la fois                    │
+│     - Clarifier scope et edge cases                 │
+│     - Challenger les réponses vagues                │
+└─────────────────────────────────────────────────────┘
+        ↓
+┌─────────────────────────────────────────────────────┐
+│  2. ANALYSE CODEBASE                                │
 │     - Identifier fichiers concernés                 │
 │     - Vérifier patterns existants (AGENTS.md)       │
 │     - Détecter dépendances                          │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  2. DÉCOMPOSITION EN STORIES                        │
-│     - 1 story = 1 changement atomique               │
-│     - Max 5-7 stories par PRD                       │
-│     - Critères d'acceptation clairs                 │
+│  3. EDGE CASES (7 catégories)                       │
+│     - Input, State, User Behavior                   │
+│     - Error, Data, Security, Performance            │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  3. GÉNÉRER PRD JSON                                │
+│  4. DÉCOMPOSITION EN STORIES                        │
+│     - 1 story = 1-2 lignes max                      │
+│     - Max 5-8 stories par PRD                       │
+│     - Dépendances ordonnées                         │
+└─────────────────────────────────────────────────────┘
+        ↓
+┌─────────────────────────────────────────────────────┐
+│  5. GÉNÉRER PRD JSON                                │
 │     - Créer tasks/prd-{feature}.json                │
 │     - Format standardisé Ralph-compatible           │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  4. PRÉSENTER POUR VALIDATION                       │
+│  6. PRÉSENTER POUR VALIDATION                       │
 │                                                     │
 │     📋 PLAN : {titre}                               │
 │     📝 Description : {description}                  │
-│     📌 User Stories :                               │
+│     📌 User Stories : (ordonnées par dépendance)    │
 │     - US-001: {titre} → {fichiers}                  │
-│     - US-002: {titre} → {fichiers}                  │
+│     🔍 Edge Cases identifiés : {nombre}             │
 │     🎯 Critères d'acceptation :                     │
 │     - {critère 1}                                   │
-│     - {critère 2}                                   │
 │                                                     │
 │     Valide ce plan ? (oui/non/modifier)             │
 └─────────────────────────────────────────────────────┘
 ```
+
+## BMAD Discovery Questions
+
+Poser UNE question à la fois. Si réponse vague, challenger.
+
+1. **Problem & Value** : Quel problème cette feature résout-elle ?
+2. **Users** : Qui exactement l'utilise ? Dans quel contexte ?
+3. **Core Behavior** : Si seulement 3 choses fonctionnent, lesquelles ?
+4. **Success** : Comment sait-on que ça marche ? (critères mesurables)
+5. **Non-Scope** : Qu'est-ce qui n'est PAS inclus ? (boundaries)
+
+## 7 Catégories d'Edge Cases
+
+**OBLIGATOIRE** : Pour chaque PRD, identifier les edge cases pertinents.
+
+### 1. INPUT
+- [ ] Champs vides / null / undefined
+- [ ] Valeurs aux limites (min/max, 0, négatifs)
+- [ ] Caractères spéciaux (émojis, HTML, SQL)
+- [ ] Données très longues (texte 10K+, fichiers gros)
+- [ ] Types invalides (string au lieu de number)
+
+### 2. STATE
+- [ ] Race conditions (double-submit, concurrent edits)
+- [ ] Données stales (cache invalidation)
+- [ ] État partiel (opération interrompue)
+- [ ] État incohérent (BDD vs UI)
+
+### 3. USER BEHAVIOR
+- [ ] Double-click rapide
+- [ ] Back button pendant action
+- [ ] Refresh pendant submit
+- [ ] Abandon de flow (fermer tab/naviguer)
+- [ ] Multi-tab/multi-device
+
+### 4. ERROR HANDLING
+- [ ] Réseau coupé / timeout
+- [ ] API rate limits
+- [ ] Validation errors (Zod)
+- [ ] Permission denied
+- [ ] Resource not found
+
+### 5. DATA
+- [ ] Premier usage (empty state)
+- [ ] Données legacy / migration
+- [ ] Cascade deletes
+- [ ] Données corrompues / malformées
+
+### 6. SECURITY
+- [ ] Session expirée mid-action
+- [ ] Permissions changées pendant usage
+- [ ] Injection attempts (XSS, SQL)
+- [ ] Data leakage (logs, URLs)
+- [ ] CSRF / token expiry
+
+### 7. PERFORMANCE
+- [ ] Cold start / first load
+- [ ] Large payloads (1000+ items)
+- [ ] Memory leaks (long sessions)
+- [ ] N+1 queries
+- [ ] Bundle size impact
 
 ## Format PRD Généré
 
@@ -70,55 +143,46 @@ Génère un PRD (Product Requirements Document) structuré pour une feature, pr�
   "stories": [
     {
       "id": "US-001",
-      "title": "Titre de la story",
+      "title": "Titre de la story (1-2 lignes max)",
       "description": "Ce qui doit être fait précisément",
       "files": ["src/path/to/file.tsx"],
       "acceptance": [
-        "Critère vérifiable 1",
-        "Critère vérifiable 2"
+        "Typecheck passe",
+        "Critère vérifiable spécifique"
       ],
+      "dependencies": [],
       "status": "pending"
+    }
+  ],
+  "edge_cases": [
+    {
+      "category": "INPUT",
+      "case": "Champs vides",
+      "severity": "HIGH",
+      "handling": "Validation Zod avec message d'erreur"
     }
   ],
   "completion_criteria": [
     "npm run typecheck passe",
     "npm run lint passe",
-    "Feature visible et fonctionnelle"
+    "Feature visible et fonctionnelle",
+    "Edge cases HIGH/CRITICAL gérés"
   ],
-  "created": "2026-01-18",
+  "created": "2026-01-19",
   "validated": false
 }
 ```
 
-## Bonnes Pratiques PRD (Ralph Wiggum)
+## Story Quality Checklist
 
-### ✅ BON PRD
+**AVANT de finaliser le PRD, vérifier :**
 
-```markdown
-**Titre**: Ajouter toggle dark mode
-
-**Stories**:
-1. Créer CSS variables pour thèmes → globals.css
-2. Créer composant ThemeToggle → components/ui/
-3. Persister préférence localStorage → hooks/useTheme.ts
-4. Intégrer dans Header → components/dashboard/header.tsx
-
-**Critères**:
-- Toggle visible dans header
-- Thème persiste après refresh
-- Transition smooth entre thèmes
-```
-
-### ❌ MAUVAIS PRD
-
-```markdown
-"Ajouter dark mode et le rendre beau"
-```
-
-Problèmes :
-- Pas de stories atomiques
-- "Beau" n'est pas vérifiable
-- Pas de fichiers identifiés
+- [ ] Chaque story fait 1-2 lignes max (sinon splitter)
+- [ ] Stories ordonnées par dépendance (schema → API → UI)
+- [ ] Critères d'acceptation spécifiques (pas vagues)
+- [ ] "Typecheck passe" inclus dans chaque story
+- [ ] "Vérifier dans browser" pour stories UI
+- [ ] Edge cases HIGH/CRITICAL ont une story dédiée
 
 ## Règles de Décomposition
 
@@ -131,26 +195,23 @@ Problèmes :
 
 3. **Fichiers Explicites**
    - Toujours lister les fichiers à modifier
-   - Utiliser CLAUDE.md mapping zones → fichiers
+   - Utiliser AGENTS.md mapping zones → fichiers
 
-4. **Ordre Logique**
-   - CSS/styles avant composants
-   - Hooks/utils avant composants qui les utilisent
-   - Tests en dernier (si applicable)
+4. **Ordre par Dépendance**
+   - DB schema / migrations en premier
+   - Types/interfaces ensuite
+   - API routes avant UI
+   - Components avant pages
+   - Tests en dernier
 
-## Intégration Workflow
+## Sévérité Edge Cases
 
-```
-Utilisateur: "Ajoute X"
-        ↓
-Claude: /prd x-feature "Ajoute X"
-        ↓
-Claude: Présente le plan
-        ↓
-Utilisateur: "oui"
-        ↓
-Claude: /ralph x-feature
-```
+| Sévérité | Action |
+|----------|--------|
+| CRITICAL | Story dédiée obligatoire |
+| HIGH | Story dédiée ou intégré dans story existante |
+| MEDIUM | Mentionné dans acceptance criteria |
+| LOW | Documenté pour future iteration |
 
 ## Templates par Type
 
@@ -158,9 +219,11 @@ Claude: /ralph x-feature
 ```json
 {
   "stories": [
-    {"id": "US-001", "title": "Créer styles CSS", "files": ["globals.css"]},
-    {"id": "US-002", "title": "Créer composant", "files": ["components/..."]},
-    {"id": "US-003", "title": "Intégrer dans page", "files": ["app/...page.tsx"]}
+    {"id": "US-001", "title": "Créer types/interfaces", "dependencies": []},
+    {"id": "US-002", "title": "Créer styles CSS", "dependencies": ["US-001"]},
+    {"id": "US-003", "title": "Créer composant", "dependencies": ["US-002"]},
+    {"id": "US-004", "title": "Intégrer dans page", "dependencies": ["US-003"]},
+    {"id": "US-005", "title": "Gérer edge cases input", "dependencies": ["US-004"]}
   ]
 }
 ```
@@ -169,9 +232,11 @@ Claude: /ralph x-feature
 ```json
 {
   "stories": [
-    {"id": "US-001", "title": "Créer route API", "files": ["app/api/.../route.ts"]},
-    {"id": "US-002", "title": "Ajouter validation Zod", "files": ["lib/validations/..."]},
-    {"id": "US-003", "title": "Connecter frontend", "files": ["components/..."]}
+    {"id": "US-001", "title": "Créer/modifier schema BDD", "dependencies": []},
+    {"id": "US-002", "title": "Créer validation Zod", "dependencies": ["US-001"]},
+    {"id": "US-003", "title": "Créer route API", "dependencies": ["US-002"]},
+    {"id": "US-004", "title": "Gérer erreurs et edge cases", "dependencies": ["US-003"]},
+    {"id": "US-005", "title": "Connecter frontend", "dependencies": ["US-004"]}
   ]
 }
 ```
@@ -181,9 +246,29 @@ Claude: /ralph x-feature
 {
   "branch": "fix/bug-name",
   "stories": [
-    {"id": "FIX-001", "title": "Identifier cause", "files": ["..."]},
-    {"id": "FIX-002", "title": "Appliquer correction", "files": ["..."]},
-    {"id": "FIX-003", "title": "Ajouter test régression", "files": ["..."]}
+    {"id": "FIX-001", "title": "Reproduire et identifier cause"},
+    {"id": "FIX-002", "title": "Appliquer correction"},
+    {"id": "FIX-003", "title": "Ajouter test régression"}
   ]
 }
+```
+
+## Intégration Workflow
+
+```
+Utilisateur: "Ajoute X"
+        ↓
+Claude: Pose questions BMAD (1 à la fois)
+        ↓
+Utilisateur: Répond
+        ↓
+Claude: /prd x-feature → Analyse + Edge Cases + Stories
+        ↓
+Claude: Présente le plan complet
+        ↓
+Utilisateur: "oui" / "modifie Y"
+        ↓
+Claude: /check-stories x-feature (validation)
+        ↓
+Claude: /ralph x-feature
 ```
