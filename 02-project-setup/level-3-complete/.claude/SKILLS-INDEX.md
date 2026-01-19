@@ -11,10 +11,12 @@ Ce fichier définit quand les skills sont automatiquement appliqués selon le co
 | `/ralph` | Après validation PRD | Non - manuel |
 | `/test` | Après `/ralph` | Suggéré |
 | `/review` | Avant `/commit` | Suggéré |
+| `/security` | Avant `/commit` (quick scan) | Suggéré |
 | `/commit` | Changements à commiter | Non - manuel |
 | `/compound` | Après feature significative | Suggéré |
 | `/extract` | Après debug non-trivial | Suggéré |
 | `/qa` | Après deploy | Suggéré |
+| `/notify` | Config notifications mobile | Non - one-time setup |
 
 ## Stack-Based Auto-Application
 
@@ -53,8 +55,9 @@ Quand ces mots apparaissent, suggérer le skill associé :
 | "nouvelle feature", "ajouter", "créer" | `/prd` |
 | "bug", "erreur", "ne marche pas" | Debug → `/extract` si résolu |
 | "déployer", "production", "live" | `/qa` |
-| "commit", "push", "PR" | `/review` → `/commit` |
+| "commit", "push", "PR" | `/security quick` → `/review` → `/commit` |
 | "optimiser", "performance", "lent" | `/lighthouse` |
+| "sécurité", "vulnérabilité", "secrets" | `/security` |
 
 ## Quality Gates Automatiques
 
@@ -65,7 +68,7 @@ Changements staged ?
     ↓
 Est-ce > 5 lignes ou > 1 fichier ?
     ↓ OUI
-Suggérer: /review avant /commit
+Suggérer: /security quick → /review → /commit
 ```
 
 ### Après Debug Significatif (>10 min)
@@ -93,12 +96,23 @@ Suggérer: /compound pour documenter dans AGENTS.md
 ```
 /prd
   └── /check-stories (recommandé)
-        └── /ralph
-              └── /test
-                    └── /review
-                          └── /commit
-                                └── /compound (optionnel)
-                                └── /qa (si deploy)
+        └── /ralph ─────────────────────────┐
+              │                              │
+              ├── 📱 Notifications (ntfy.sh) │
+              │   - Start: "🚀 Ralph started"│
+              │   - Story done: "✅ X/N"     │
+              │   - Complete: "🎉 Done"      │
+              │   - Error: "❌ Stuck"        │
+              │                              │
+              └── /test                      │
+                    └── /security quick      │
+                          └── /review        │
+                                └── /commit  │
+                                      │      │
+                                      ├──────┘
+                                      │
+                                      └── /compound (optionnel)
+                                      └── /qa (si deploy)
 ```
 
 ## File Type Triggers

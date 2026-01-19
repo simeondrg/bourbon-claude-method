@@ -22,12 +22,14 @@ Le PRD doit exister dans `tasks/prd-{feature}.json` avec le format standardisé.
 │  0. CHARGER CONTEXTE                                │
 │     - Lire AGENTS.md (patterns & learnings)         │
 │     - Appliquer les conventions découvertes         │
+│     - 📱 Notification: "🚀 Ralph started: {feature}"│
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
 │  1. CHARGER PRD                                     │
 │     - Lire tasks/prd-{feature}.json                 │
 │     - Vérifier que toutes les stories sont définies │
+│     - Créer tasks/progress-{feature}.txt           │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
@@ -44,7 +46,8 @@ Le PRD doit exister dans `tasks/prd-{feature}.json` avec le format standardisé.
 │     d. Si échec validation → fix et retry (max 3x)  │
 │     e. git commit -m "feat(scope): US-XXX title"    │
 │     f. Marquer story comme completed dans PRD       │
-│     g. Afficher "✅ [X/N] US-XXX complété"          │
+│     g. Mettre à jour progress-{feature}.txt         │
+│     h. 📱 Notification: "✅ US-XXX done (X/N)"      │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
@@ -62,12 +65,17 @@ Le PRD doit exister dans `tasks/prd-{feature}.json` avec le format standardisé.
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  6. RAPPORT FINAL                                   │
+│  6. ARCHIVER & RAPPORT FINAL                        │
+│     - mv tasks/prd-{feature}.json tasks/archive/    │
+│     - mv tasks/progress-{feature}.txt tasks/archive/│
+│     - 📱 Notification: "🎉 Build complete: {feature}"│
+│     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━       │
 │     ✅ RALPH COMPLETE                               │
 │     📝 Commits: X                                   │
 │     📁 Fichiers modifiés: Y                         │
 │     🔗 PR: https://github.com/.../pull/N            │
 │     📚 AGENTS.md: [mis à jour / inchangé]           │
+│     📂 Archived: tasks/archive/prd-{feature}.json   │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -95,6 +103,60 @@ Le fichier `tasks/prd-{feature}.json` doit avoir ce format :
   "validated": true
 }
 ```
+
+## Notifications Mobile (ntfy.sh)
+
+Ralph envoie des notifications si `.notify-config` existe (voir `/notify setup`).
+
+| Événement | Message | Priorité |
+|-----------|---------|----------|
+| Démarrage | "🚀 Ralph started: {feature}" | default |
+| Story OK | "✅ US-XXX done (X/N)" | default |
+| Build OK | "🎉 Build complete: {feature}" | default |
+| Erreur | "❌ Error: {message}" | high |
+| Max retries | "⚠️ Stuck on US-XXX" | high |
+
+Cela permet de lancer Ralph et de partir faire autre chose.
+
+## Progress File (tasks/progress-{feature}.txt)
+
+Ralph maintient un fichier de progression pour chaque feature :
+
+```
+# Progress: unified-buttons
+# Started: 2026-01-19 14:30
+# PRD: tasks/prd-unified-buttons.json
+
+## Codebase Patterns (from AGENTS.md)
+- Use `btn-sparkle` class for animated buttons
+- Mobile-first breakpoints: sm/md/lg/xl
+- Supabase RLS for all queries
+
+## Stories Progress
+[x] US-001: Create btn-sparkle CSS class (14:32)
+[x] US-002: Apply to hero buttons (14:45)
+[ ] US-003: Apply to pricing buttons
+[ ] US-004: Add hover animations
+
+## Current: US-003
+Implementing pricing button updates...
+
+## Issues Encountered
+- Fixed import path for utils (14:40)
+```
+
+Ce fichier permet de :
+- Reprendre là où on en était si session interrompue
+- Voir le contexte codebase au moment du build
+- Tracker les issues rencontrées
+
+## Archive System (tasks/archive/)
+
+Une fois le build terminé et la PR créée :
+- `prd-{feature}.json` → `tasks/archive/prd-{feature}.json`
+- `progress-{feature}.txt` → `tasks/archive/progress-{feature}.txt`
+
+Cela garde le dossier `tasks/` propre tout en conservant l'historique.
 
 ## Quality Gates
 
