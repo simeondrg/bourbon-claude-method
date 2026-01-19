@@ -104,17 +104,38 @@ Le fichier `tasks/prd-{feature}.json` doit avoir ce format :
 }
 ```
 
-## Notifications Mobile (ntfy.sh)
+## Notifications Mobile (ntfy.sh) - OBLIGATOIRE
 
-Ralph envoie des notifications si `.notify-config` existe (voir `/notify setup`).
+**IMPORTANT** : Ralph DOIT exécuter ces commandes de notification aux moments indiqués.
 
-| Événement | Message | Priorité |
-|-----------|---------|----------|
-| Démarrage | "🚀 Ralph started: {feature}" | default |
-| Story OK | "✅ US-XXX done (X/N)" | default |
-| Build OK | "🎉 Build complete: {feature}" | default |
-| Erreur | "❌ Error: {message}" | high |
-| Max retries | "⚠️ Stuck on US-XXX" | high |
+### Commande de notification
+
+```bash
+# Lire le topic depuis .notify-config et envoyer
+if [ -f ".notify-config" ]; then source .notify-config && curl -s -H "Title: Ralph" -d "MESSAGE" "ntfy.sh/$NTFY_TOPIC"; fi
+```
+
+### Moments d'envoi (OBLIGATOIRE)
+
+| Moment | Commande exacte |
+|--------|-----------------|
+| **Démarrage** | `if [ -f ".notify-config" ]; then source .notify-config && curl -s -H "Title: Ralph" -d "🚀 Started: {feature}" "ntfy.sh/$NTFY_TOPIC"; fi` |
+| **Story OK** | `if [ -f ".notify-config" ]; then source .notify-config && curl -s -H "Title: Ralph" -d "✅ {US-XXX} done ({X}/{N})" "ntfy.sh/$NTFY_TOPIC"; fi` |
+| **Build OK** | `if [ -f ".notify-config" ]; then source .notify-config && curl -s -H "Title: Ralph" -H "Priority: high" -d "🎉 COMPLETE: {feature} - PR ready" "ntfy.sh/$NTFY_TOPIC"; fi` |
+| **Erreur** | `if [ -f ".notify-config" ]; then source .notify-config && curl -s -H "Title: Ralph" -H "Priority: urgent" -d "❌ Error: {message}" "ntfy.sh/$NTFY_TOPIC"; fi` |
+
+### Exemple concret
+
+```bash
+# Au démarrage de /ralph auth-system
+if [ -f ".notify-config" ]; then source .notify-config && curl -s -H "Title: Ralph" -d "🚀 Started: auth-system" "ntfy.sh/$NTFY_TOPIC"; fi
+
+# Après US-001 (1/4 stories)
+if [ -f ".notify-config" ]; then source .notify-config && curl -s -H "Title: Ralph" -d "✅ US-001 done (1/4)" "ntfy.sh/$NTFY_TOPIC"; fi
+
+# À la fin
+if [ -f ".notify-config" ]; then source .notify-config && curl -s -H "Title: Ralph" -H "Priority: high" -d "🎉 COMPLETE: auth-system - PR ready" "ntfy.sh/$NTFY_TOPIC"; fi
+```
 
 Cela permet de lancer Ralph et de partir faire autre chose.
 
