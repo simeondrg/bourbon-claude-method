@@ -2,6 +2,8 @@
 
 **La méthode pour créer n'importe quel projet avec Claude Code - sans effort, tout est automatisé.**
 
+> Compatible Claude Code **2.1.17+** (janvier 2025)
+
 ---
 
 ## RÈGLE D'OR
@@ -62,46 +64,63 @@ Puis décris ton projet :
 
 ---
 
-## Ce qui se passe automatiquement
+## Nouveautés 2025
+
+### Architecture modulaire `.claude/rules/`
+
+Les règles sont maintenant séparées en fichiers modulaires :
 
 ```
-Tu dis: "site pour mon restaurant"
-           │
-           ▼
-┌─────────────────────────────────────────┐
-│  Claude comprend automatiquement:       │
-│  • Type: Site vitrine                   │
-│  • Cible: Tes clients                   │
-│  • Features: Menu, Contact, Maps        │
-└─────────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────────┐
-│  Claude installe automatiquement:       │
-│  • Skills pertinents (design, SEO)      │
-│  • Structure projet optimale            │
-│  • Configuration complète               │
-└─────────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────────┐
-│  Claude construit automatiquement:      │
-│  • Toutes les pages                     │
-│  • Le design (vérifié visuellement)     │
-│  • Les tests                            │
-└─────────────────────────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────────┐
-│  Claude déploie automatiquement:        │
-│  • GitHub (sauvegarde)                  │
-│  • Vercel (en ligne)                    │
-│  • URL finale prête                     │
-└─────────────────────────────────────────┘
-           │
-           ▼
-     🎉 "Ton site est en ligne: [URL]"
+.claude/
+├── rules/
+│   ├── automation.md   # Règle d'or
+│   ├── stack.md        # Technologies
+│   ├── quality.md      # Standards code
+│   └── patterns.md     # Auto-rempli
+├── commands/           # Skills (/start, /ralph...)
+└── hooks.md            # Documentation hooks
 ```
+
+**Avantages** :
+- CLAUDE.md allégé (~70% moins de tokens)
+- Règles chargées à la demande
+- Plus facile à maintenir
+
+### Commandes Claude essentielles
+
+| Commande | Action |
+|----------|--------|
+| `/compact` | Compresser contexte (libérer tokens) |
+| `/usage` | Voir consommation du plan |
+| `/context` | Voir tokens utilisés |
+| `/clear` | Nouveau départ |
+
+### Raccourcis
+
+| Touche | Action |
+|--------|--------|
+| `Ctrl+S` | Stash prompt (sauvegarde temp) |
+| `!` | Autocomplete historique bash |
+| `Ctrl+C` | Interrompre proprement |
+
+### Hooks (automation avancée)
+
+Exécuter des actions automatiques :
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "command": "npm run lint --fix"
+      }
+    ]
+  }
+}
+```
+
+Voir `.claude/hooks.md` pour plus d'exemples.
 
 ---
 
@@ -117,54 +136,39 @@ Tu dis: "site pour mon restaurant"
 
 ---
 
-## Raccourcis utiles
-
-| Raccourci | Action |
-|-----------|--------|
-| `Ctrl+S` | Sauvegarder ton prompt (comme git stash) |
-| `Ctrl+C` | Arrêter Claude proprement |
-| `/clear` | Recommencer à zéro |
-
----
-
 ## Pour les développeurs
 
-### Workflow automatisé
+### Stack par défaut
 
-L'ancien workflow manuel :
-```
-/prd → /check-stories → /ralph → /test → /security → /review → /commit
-```
+- **Frontend** : Next.js 14+ (App Router) + Tailwind + shadcn/ui
+- **Backend** : Supabase (PostgreSQL + Auth + Storage)
+- **Infra** : Vercel + Stripe
+- **Tests** : Playwright (E2E)
 
-**Est maintenant automatique.** Tu dis ce que tu veux, Claude enchaîne tout seul.
+### Skills auto-installés
 
-### Skills installés automatiquement
-
-| Type projet | Skills auto-installés |
-|-------------|----------------------|
+| Type projet | Skills |
+|-------------|--------|
 | Vitrine | `web-design-guidelines`, `vercel-react-best-practices` |
 | Web App | + `frontend-design`, `native-data-fetching` |
 | SaaS | + `better-auth-best-practices` |
 | Mobile | `building-native-ui`, `upgrading-expo` |
 
-Source: [skills.sh](https://skills.sh) - Le marketplace officiel
+Source: [skills.sh](https://skills.sh)
 
-### Vérification visuelle
+### Frontmatter Skills (format officiel)
 
-Ralph inclut maintenant une **vérification visuelle automatique** :
-- Ouvre le browser sur localhost
-- Screenshot automatique
-- Détecte les problèmes visuels
-- Corrige automatiquement
+```yaml
+---
+name: my-skill
+description: "Quand utiliser ce skill"
+argument-hint: "[args]"
+allowed-tools: Read, Write, Bash
+model: sonnet
+---
 
-Utilise [Browser Use CLI](https://github.com/anthropics/browser-use) ou Chrome MCP.
-
-### Stack par défaut
-
-- **Frontend** : Next.js 14 (App Router) + Tailwind + shadcn/ui
-- **Backend** : Supabase (PostgreSQL + Auth + Storage)
-- **Infra** : Vercel + Stripe
-- **Tests** : Playwright (E2E) + Browser Use (visuel)
+# Instructions du skill...
+```
 
 ---
 
@@ -172,12 +176,15 @@ Utilise [Browser Use CLI](https://github.com/anthropics/browser-use) ou Chrome M
 
 ```
 bourbon-claude-method/
-├── setup.sh                    # Installation automatique
-├── templates/commands/         # /start et autres
+├── setup.sh                    # Installation
+├── templates/commands/         # Templates skills
 └── 02-project-setup/
-    └── level-3-complete/       # Setup complet
-        ├── CLAUDE.md           # Config projet (inclut patterns)
-        └── .claude/commands/   # Skills automatisés
+    └── level-3-complete/
+        ├── CLAUDE.md           # Config projet (allégé)
+        └── .claude/
+            ├── rules/          # Règles modulaires
+            ├── commands/       # Skills
+            └── hooks.md        # Documentation hooks
 ```
 
 ---
@@ -187,33 +194,17 @@ bourbon-claude-method/
 ### Compound Engineering
 > "Chaque unité de travail doit rendre les suivantes plus faciles."
 
-Les patterns découverts sont automatiquement documentés dans CLAUDE.md pour que Claude ne répète pas les mêmes erreurs.
-
 ### Automatisation Maximale
 > "L'utilisateur décrit, Claude exécute."
-
-Pas de questions inutiles. Pas de "tu veux que je...?". Action immédiate.
-
----
-
-## Cours Premium
-
-Le repo est gratuit et complet. Pour aller plus loin :
-
-**[Bourbon Claude Masterclass](https://bourbonmedia.fr/masterclass)**
-
-- Vidéos tutoriels pas-à-pas
-- Projets guidés de A à Z
-- Accès communauté privée
 
 ---
 
 ## Liens
 
 - [Bourbon Media](https://bourbonmedia.fr)
+- [Masterclass Premium](https://bourbonmedia.fr/masterclass)
 - [Twitter/X](https://twitter.com/simeondrg)
-- [YouTube](https://youtube.com/@bourbonmedia)
 
 ---
 
-*Créé avec Claude Code à La Réunion*
+*Créé avec Claude Code à La Réunion 🇷🇪*
