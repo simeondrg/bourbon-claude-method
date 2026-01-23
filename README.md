@@ -145,16 +145,39 @@ Voir `.claude/hooks.md` pour plus d'exemples.
 - **Infra** : Vercel + Stripe
 - **Tests** : Playwright (E2E)
 
-### Skills auto-installés
+### Skills Library (skills.sh)
 
-| Type projet | Skills |
-|-------------|--------|
-| Vitrine | `web-design-guidelines`, `vercel-react-best-practices` |
-| Web App | + `frontend-design`, `native-data-fetching` |
-| SaaS | + `better-auth-best-practices` |
-| Mobile | `building-native-ui`, `upgrading-expo` |
+> **Règle d'Or** : Au démarrage de chaque projet, installer les skills pertinents selon le type, puis les appeler au fur et à mesure.
 
-Source: [skills.sh](https://skills.sh)
+#### Installation rapide
+
+```bash
+/skills-install           # Auto-détecte le type
+/skills-install saas      # Bundle SaaS complet
+/skills-install mobile    # Bundle mobile Expo
+/skills-install marketing # Bundle marketing
+```
+
+#### Bundles disponibles
+
+| Bundle | Skills inclus | Commande |
+|--------|---------------|----------|
+| **CORE** (auto) | react-best-practices, web-design, TDD, debugging | `npx skills add vercel-labs/agent-skills` |
+| **SaaS** | supabase, stripe, better-auth | `npx skills add supabase/agent-skills stripe/ai better-auth/skills` |
+| **Marketing** | seo-audit, copywriting, paid-ads, email-sequence | `npx skills add coreyhaines31/marketingskills` |
+| **Mobile** | expo, react-native, native-ui | `npx skills add expo/skills callstackincubator/agent-skills` |
+
+#### Appel contextuel automatique
+
+| Contexte | Skill appelé |
+|----------|--------------|
+| Composant React | `/vercel-react-best-practices` |
+| Table Supabase | `/supabase-postgres-best-practices` |
+| Intégration Stripe | `/stripe-best-practices` |
+| Copy marketing | `/copywriting` |
+| Meta Ads | `/paid-ads` |
+
+📚 **Catalogue complet** : [06-skills-library/](./06-skills-library/) ou [skills.sh](https://skills.sh)
 
 ### Frontmatter Skills (format officiel)
 
@@ -178,13 +201,20 @@ model: sonnet
 bourbon-claude-method/
 ├── setup.sh                    # Installation
 ├── templates/commands/         # Templates skills
-└── 02-project-setup/
-    └── level-3-complete/
-        ├── CLAUDE.md           # Config projet (allégé)
-        └── .claude/
-            ├── rules/          # Règles modulaires
-            ├── commands/       # Skills
-            └── hooks.md        # Documentation hooks
+├── 00-getting-started/         # Guide démarrage
+├── 01-idea-to-plan/            # Business planning
+├── 02-project-setup/           # Configs CLAUDE.md (3 niveaux)
+│   └── level-3-complete/
+│       ├── CLAUDE.md           # Config projet (allégé)
+│       └── .claude/
+│           ├── rules/          # Règles modulaires
+│           ├── commands/       # Skills locaux
+│           ├── SKILLS-INDEX.md # Matrice auto-application
+│           └── hooks.md        # Documentation hooks
+├── 03-development/             # Workflows dev
+├── 04-launch/                  # Déploiement
+├── 05-monetize/                # Stripe, revenus
+└── 06-skills-library/          # 📚 Catalogue skills.sh complet
 ```
 
 ---

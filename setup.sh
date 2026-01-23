@@ -199,7 +199,44 @@ install_bourbon_commands() {
         echo -e "${CHECK} Commande ${GREEN}/bourbon-init${NC} installée"
     fi
 
+    if [[ -f "$SCRIPT_DIR/templates/commands/skills-install.md" ]]; then
+        cp "$SCRIPT_DIR/templates/commands/skills-install.md" "$COMMANDS_DIR/skills-install.md"
+        echo -e "${CHECK} Commande ${GREEN}/skills-install${NC} installée"
+    fi
+
     echo -e "${CHECK} Commandes Bourbon installées dans ${CYAN}~/.claude/commands/${NC}"
+}
+
+# Installation des Skills de base (skills.sh)
+install_core_skills() {
+    echo ""
+    echo -e "${PACKAGE} ${BLUE}Installation des Skills de base (skills.sh)...${NC}"
+
+    # Vérifier si npx est disponible
+    if ! command_exists npx; then
+        echo -e "${YELLOW}${ARROW} npx non disponible, skills non installés${NC}"
+        echo -e "${CYAN}Tu pourras les installer plus tard avec /skills-install${NC}"
+        return
+    fi
+
+    echo -e "${CYAN}Installation du bundle CORE...${NC}"
+
+    # Bundle CORE - toujours installé
+    npx skills add vercel-labs/agent-skills 2>/dev/null && \
+        echo -e "${CHECK} vercel-labs/agent-skills (react, web-design)" || \
+        echo -e "${YELLOW}⚠ vercel-labs/agent-skills (à installer manuellement)${NC}"
+
+    npx skills add anthropics/skills 2>/dev/null && \
+        echo -e "${CHECK} anthropics/skills (frontend-design, pdf, xlsx...)" || \
+        echo -e "${YELLOW}⚠ anthropics/skills (à installer manuellement)${NC}"
+
+    npx skills add obra/superpowers 2>/dev/null && \
+        echo -e "${CHECK} obra/superpowers (TDD, debugging, planning)" || \
+        echo -e "${YELLOW}⚠ obra/superpowers (à installer manuellement)${NC}"
+
+    echo ""
+    echo -e "${CHECK} Skills CORE installés"
+    echo -e "${CYAN}💡 Pour plus de skills : /skills-install [saas|mobile|marketing]${NC}"
 }
 
 # Vérification finale
@@ -237,6 +274,14 @@ final_check() {
         echo -e "  ${CROSS} Claude Code: non installé"
     fi
 
+    # Vérifier skills installés
+    if [[ -d "$HOME/.claude/skills" ]] && [[ "$(ls -A $HOME/.claude/skills 2>/dev/null)" ]]; then
+        SKILLS_COUNT=$(ls -1 "$HOME/.claude/skills" 2>/dev/null | wc -l | tr -d ' ')
+        echo -e "  ${CHECK} Skills     : ${SKILLS_COUNT} bundles installés"
+    else
+        echo -e "  ${YELLOW}⚠${NC} Skills     : aucun (utilise /skills-install)"
+    fi
+
     echo ""
     echo -e "${PURPLE}════════════════════════════════════════════════════════════${NC}"
     echo ""
@@ -263,6 +308,7 @@ main() {
     install_gh
     install_claude_code
     install_bourbon_commands
+    install_core_skills
     final_check
 }
 
