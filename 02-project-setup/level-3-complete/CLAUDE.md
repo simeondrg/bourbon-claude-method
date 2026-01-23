@@ -2,24 +2,22 @@
 
 ---
 
-## ⛔ INTERDICTION ABSOLUE - LIRE EN PREMIER
+## RÈGLE D'OR : AUTOMATISATION MAXIMALE
 
-**NE JAMAIS CODER DIRECTEMENT.**
+**L'utilisateur ne doit JAMAIS deviner quoi faire.**
 
-Quand l'utilisateur valide un plan ou dit "exécute", "implémente", "fais-le", "go" :
+Quand l'utilisateur dit quelque chose → Claude agit immédiatement.
 
-1. **INVOQUER `/ralph {feature-name}`** - PAS coder soi-même
-2. Ralph gère : branche → code → validation → commit → PR
+### Ce que ça signifie concrètement :
 
-**POURQUOI ?** L'action directe (écrire du code) contourne :
-- La création de branche feature
-- Les commits atomiques par story
-- La PR pour review
-- La traçabilité Git
+| ❌ AVANT (mauvais) | ✅ APRÈS (bon) |
+|-------------------|----------------|
+| "Tu veux que je crée un PRD ?" | [Crée le PRD] "Voici le plan, j'exécute..." |
+| "On continue ?" | [Continue automatiquement] |
+| "Valide ce plan ?" | [Exécute] "C'est fait. Prochaine étape..." |
+| "Je peux lancer les tests ?" | [Lance les tests] "Tests passés ✅" |
 
-**SI TU ES TENTÉ DE CODER DIRECTEMENT → STOP → INVOQUE LE SKILL**
-
-Cette règle est NON-NÉGOCIABLE. Aucune exception.
+**La seule question autorisée** : Demander des précisions sur le QUOI (la demande), jamais sur le COMMENT (l'exécution).
 
 ---
 
@@ -29,133 +27,49 @@ Cette règle est NON-NÉGOCIABLE. Aucune exception.
 
 - **Cible** : [Description précise]
 - **Produit** : [Core features]
-- **Stack** : [Technologies principales]
+- **Stack** : Next.js 14 + Supabase + Vercel + Stripe
 
 ---
 
-## WORKFLOW OBLIGATOIRE : Plan → Implémentation → Tests → Review → Commit
-
-**RÈGLE ABSOLUE** : Pour TOUTE demande de modification, suivre ce workflow en 5 étapes.
-
-### Étape 1 : PLAN avec `/prd`
-
-Dès qu'une modification est demandée :
-1. Analyser la demande
-2. Explorer le codebase
-3. Créer un PRD dans `tasks/prd-{feature}.json` avec :
-   - User Stories atomiques
-   - **Tests E2E** à exécuter
-   - Critères d'acceptation
-4. Présenter le plan pour validation
-
-Format :
-```
-📋 PLAN : {titre}
-📝 Description : {description}
-📌 User Stories :
-- US-001: {titre} → {fichiers}
-🧪 Tests E2E :
-- {scénario test}
-🎯 Critères d'acceptation :
-- {critère}
-
-Valide ce plan ? (oui/non/modifier)
-```
-
-### Étape 2 : IMPLÉMENTATION avec `/ralph`
+## WORKFLOW AUTOMATIQUE (pas de validation intermédiaire)
 
 ```
-/ralph {feature-name}
-```
-- Implémente chaque story
-- Quality Gate après chaque story (typecheck + lint)
-- Commit après chaque story validée
+L'utilisateur demande quelque chose
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│  DÉTECTION AUTOMATIQUE DU TYPE          │
+└─────────────────────────────────────────┘
+         │
+         ├── Fast-track? (< 5 lignes) ──→ Edit direct → /commit
+         │
+         ├── Bug/Erreur? ──→ Debug → Fix → Test → /commit
+         │
+         ├── Feature? ──→ /prd (silencieux) → /ralph → /commit
+         │
+         └── Design? ──→ Browser → Analyse → Fix → /commit
 
-### Étape 3 : TESTS avec `/test`
-
-```
-/test {feature-name}
-```
-- Lance les tests E2E définis dans le PRD
-- Si échec → fix avec `/ralph` → re-test
-
-### Étape 4 : REVIEW avec `/review`
-
-```
-/review
-```
-- Review automatique : sécurité, performance, conventions
-- Si issues critiques → fix avant de continuer
-
-### Étape 5 : COMMIT avec `/commit`
-
-```
-/commit
-```
-- Commit final + push + création PR
-
-### Workflow résumé
-
-```
-/prd → /ralph → /test → /review → /commit → /compound (optionnel)
-         ↑         ↑
-         └─ fix ───┘
+         ▼
+┌─────────────────────────────────────────┐
+│  EXÉCUTION + FEEDBACK VISUEL            │
+│  (progress bar, pas de questions)       │
+└─────────────────────────────────────────┘
+         │
+         ▼
+    "C'est fait. [résumé]. Autre chose ?"
 ```
 
-### Fast-Track (micro-changements)
+### Mapping Automatique : Ce que dit l'utilisateur → Ce que fait Claude
 
-Pour les changements triviaux (< 5 lignes, 1 fichier) :
-
-```
-Utilisateur: "Fix le typo"
-Claude: [modifie directement] → /commit
-```
-
-**Critères** : typo, couleur, texte, pas d'impact logique métier.
-
-**Règle des 5 secondes** : Si tu hésites plus de 5 secondes, ce n'est PAS un fast-track.
-
-### Gestion des Branches
-
-| Situation | Branche |
-|-----------|---------|
-| Feature | `feature/{prd-name}` (créée par `/ralph`) |
-| Fast-Track | `main` (direct) |
-| Fix urgent | `hotfix/{bug-name}` |
-
-### Rollback (bug en prod)
-
-```bash
-git log --oneline -10          # Identifier le commit
-git revert <commit-hash>       # Revert
-git push origin main           # Push
-/prd fix-{bug-name}            # Créer PRD pour le fix
-```
-
-### Étape 6 (optionnelle) : COMPOUND
-
-```
-/compound {feature-name}
-```
-
-Documente les learnings dans AGENTS.md après une feature significative.
-
----
-
-## Types de Tests
-
-| Type | Outil | Usage |
-|------|-------|-------|
-| **E2E** | Playwright | Features UI, parcours utilisateur |
-| **Unitaires** | Vitest | Logique métier, fonctions |
-| **Intégration** | Vitest + MSW | API endpoints |
-
-Dans le PRD :
-```
-🧪 Tests :
-- E2E: [scénarios Playwright]
-- Unit: [fonctions à tester] (optionnel)
-```
+| L'utilisateur dit | Claude fait (sans demander) |
+|-------------------|----------------------------|
+| "ajoute X" | PRD → Ralph → Commit |
+| "change Y" | Edit direct → Commit |
+| "c'est moche" | Browser → Analyse → Design fix |
+| "ça marche pas" | Console → Debug → Fix → Test |
+| "mets en ligne" | Test → Review → Deploy |
+| "j'ai fini" | Security → Review → Commit → PR |
+| "fix le bug" | Debug loop jusqu'à résolution |
 
 ---
 
@@ -175,40 +89,26 @@ Dans le PRD :
 ### Infrastructure
 - Hébergement : Vercel
 - Paiements : Stripe
-- IA : [Claude API / Gemini API]
+- Browser Testing : Browser Use CLI (`npx browser-use`)
 
 ---
 
-## Design System
+## Codebase Patterns
 
-**IMPORTANT** : Créer `reference/DESIGN-SYSTEM.md` (voir template dans `reference/DESIGN-SYSTEM.template.md`)
+> Cette section se remplit automatiquement via `/compound` après chaque feature significative.
+> Claude la lit au début de chaque session pour éviter de répéter les erreurs.
 
-### Principe : Choisir un des deux modèles
+### 🏗️ Architecture Patterns
+[Auto-documenté]
 
-**Option A - Style Unique** : Même style partout (simple, cohérent)
+### 🎨 UI/UX Patterns
+[Auto-documenté]
 
-**Option B - Styles Différenciés** (recommandé pour SaaS) :
-| Contexte | Style | Pages |
-|----------|-------|-------|
-| Marketing | Punchy/Brutal | landing, pricing, about |
-| App | Calme/Soft | dashboard, features |
+### 🐛 Gotchas (pièges à éviter)
+[Auto-documenté]
 
-### Couleurs (à définir)
-```css
---primary: #[HEX];
---secondary: #[HEX];
---background: #[HEX];
---foreground: #[HEX];
-```
-
-### Typographie
-- Titres : [Font Display]
-- Corps : Inter / System
-
-### Composants
-- Utiliser shadcn/ui exclusivement
-- Mobile-first toujours
-- Respecter le Design System documenté
+### 📝 Conventions établies
+[Auto-documenté]
 
 ---
 
@@ -230,6 +130,9 @@ src/
 │   └── utils/
 ├── hooks/
 └── types/
+
+tasks/                     # PRDs actifs
+└── archive/               # PRDs terminés
 ```
 
 ---
@@ -241,17 +144,12 @@ src/
 - Pas de `any` sans justification
 - Types explicites sur exports
 
-### Imports (ordre)
-```typescript
-// 1. React/Next
-// 2. Libs externes
-// 3. Components internes
-// 4. Lib interne
-// 5. Types
+### Commits (format auto via /commit)
 ```
+feat(scope): description courte
 
-### Commits
-Format conventionnel obligatoire via `/commit`
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
 
 ---
 
@@ -262,28 +160,6 @@ npm run dev        # Développement
 npm run build      # Build
 npm run lint       # Lint
 npm run typecheck  # Types
-```
-
----
-
-## Workflow Git
-
-### Setup initial (une fois)
-```bash
-git init
-gh repo create [nom-projet] --private --source=. --push
-```
-
-### Après chaque feature (AUTOMATIQUE)
-`/commit` exécute automatiquement : commit + push
-
-### Workflow complet
-```
-1. /prd feature-name → crée PRD
-2. Valider le plan
-3. /ralph feature-name → implémente
-4. /commit → commit + push automatique
-5. /compound feature-name → documente learnings
 ```
 
 ---
@@ -300,49 +176,69 @@ SUPABASE_SERVICE_ROLE_KEY=
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 
-# IA
-ANTHROPIC_API_KEY=
+# Notifications (optionnel)
+NTFY_TOPIC=
 ```
 
 ---
 
-## Sécurité
+## Raccourcis Claude Code
 
-- Jamais de secrets côté client
-- Validation Zod sur tous les inputs API
-- RLS sur toutes les tables utilisateur
-
----
-
-## Skills Disponibles
-
-| Skill | Usage | Quand l'utiliser |
-|-------|-------|------------------|
-| `/prd` | Génération PRD structuré avec tests | Toujours en premier |
-| `/ralph` | Implémentation autonome | Après validation PRD |
-| `/test` | Tests E2E (Playwright) | Après implémentation |
-| `/review` | Code review automatique | Avant commit |
-| `/commit` | Commit + push + PR | À la fin |
-| `/compound` | Documentation learnings | Après feature complète |
-
-### Workflow standard
-```
-/prd → /ralph → /test → /review → /commit → /compound
-```
+| Raccourci | Action |
+|-----------|--------|
+| `Ctrl+S` | Stash ton prompt (sauvegarde temporaire) |
+| `Ctrl+C` | Interrompre proprement |
+| `/clear` | Vider le contexte (nouveau départ) |
+| `Escape` | Annuler l'input en cours |
 
 ---
 
-## Ce que Claude doit faire
+## Ce que Claude fait AUTOMATIQUEMENT
 
-- Lire AGENTS.md avant chaque feature
-- Suivre le workflow Plan → Validation → Ralph
+- Lire ce fichier au début de chaque session
+- Détecter le type de demande et agir immédiatement
 - Valider avec typecheck + lint après chaque changement
-- Documenter les nouveaux patterns dans AGENTS.md
+- Enchaîner les étapes sans demander confirmation
+- Proposer la prochaine action logique
+- Documenter les nouveaux patterns (section Codebase Patterns)
 
-## Ce que Claude NE doit PAS faire
+## Ce que Claude NE fait JAMAIS
 
-- Réécrire du code qui fonctionne sans demande
+- Demander "tu veux que je...?" pour une action évidente
+- Attendre une validation pour continuer
+- Réécrire du code qui fonctionne sans demande explicite
 - Ajouter des features non demandées
-- Changer l'architecture sans validation
-- Ajouter des dépendances sans justification
 - Créer de la documentation non demandée
+- Poser plus d'une question à la fois
+
+---
+
+## Fast-Track vs Full Workflow
+
+| Critère | Fast-Track | Full Workflow |
+|---------|------------|---------------|
+| Lignes modifiées | < 5 | > 5 |
+| Fichiers touchés | 1 | > 1 |
+| Impact logique | Aucun | Oui |
+| Exemple | Typo, couleur, texte | Nouvelle feature |
+| Workflow | Edit → /commit | /prd → /ralph → /commit |
+
+**Règle des 5 secondes** : Si tu hésites > 5 secondes sur fast-track ou non → Full Workflow.
+
+---
+
+## Gestion des Erreurs
+
+```
+Erreur détectée
+     │
+     ├── Erreur TypeScript → Fix auto → Retry
+     │
+     ├── Erreur Lint → Fix auto → Retry
+     │
+     ├── Erreur Build → Analyser → Fix → Retry
+     │
+     └── Erreur 3x même → STOP → Demander aide humaine
+```
+
+Maximum 3 tentatives automatiques, puis escalade.

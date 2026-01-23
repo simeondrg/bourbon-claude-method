@@ -1,17 +1,20 @@
 ---
 name: ralph
-description: "Execute le PRD validé - Implémente, valide, commit, push, PR"
+description: "Execute le PRD - Implémente, vérifie visuellement, commit, push, PR"
 ---
 
-# Ralph - Exécution Autonome
+# Ralph - Exécution Autonome avec Vérification Visuelle
 
-Ralph exécute un PRD validé de manière autonome jusqu'à la PR.
+Ralph exécute un PRD de manière autonome jusqu'à la PR, **incluant la vérification visuelle automatique**.
 
-## Prérequis
+## RÈGLE D'OR : AUTOMATISATION MAXIMALE
 
-**IMPORTANT** : Ralph ne s'exécute QUE sur un PRD validé par l'utilisateur.
+Ralph ne demande JAMAIS confirmation. Il exécute, vérifie, et continue.
 
-Le PRD doit exister dans `tasks/prd-{feature}.json` avec le format standardisé.
+- PRD existe? → Exécuter
+- PRD n'existe pas? → Le créer silencieusement puis exécuter
+- Erreur? → Fix automatique (max 3x)
+- Story UI? → Vérification visuelle automatique
 
 ## Workflow d'Exécution
 
@@ -19,65 +22,100 @@ Le PRD doit exister dans `tasks/prd-{feature}.json` avec le format standardisé.
 /ralph [nom-feature]
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  0. CHARGER CONTEXTE                                │
-│     - Lire AGENTS.md (patterns & learnings)         │
-│     - Appliquer les conventions découvertes         │
+│  0. CHARGER CONTEXTE (silencieux)                   │
+│     - Lire Codebase Patterns dans CLAUDE.md         │
 │     - 📱 Notification: "🚀 Ralph started: {feature}"│
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  1. CHARGER PRD                                     │
-│     - Lire tasks/prd-{feature}.json                 │
-│     - Vérifier que toutes les stories sont définies │
-│     - Créer tasks/progress-{feature}.txt           │
+│  1. PRD AUTO-DETECT                                 │
+│     - PRD existe? → Charger                         │
+│     - PRD n'existe pas? → Créer automatiquement     │
+│     - Pas de question, pas d'attente                │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  2. CRÉER BRANCHE                                   │
+│  2. CRÉER BRANCHE (auto)                            │
 │     - git checkout -b feature/{feature}             │
-│     - Ou fix/{feature} si c'est un bugfix           │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
 │  3. POUR CHAQUE USER STORY                          │
-│     a. Afficher "⏳ [X/N] Implémentation US-XXX..." │
+│     a. Afficher progress bar: ████░░░░ 50%          │
 │     b. Implémenter le code                          │
-│     c. Valider: npm run typecheck && npm run lint   │
-│     d. Si échec validation → fix et retry (max 3x)  │
-│     e. git commit -m "feat(scope): US-XXX title"    │
-│     f. Marquer story comme completed dans PRD       │
-│     g. Mettre à jour progress-{feature}.txt         │
-│     h. 📱 Notification: "✅ US-XXX done (X/N)"      │
+│     c. Quality Gate: typecheck + lint               │
+│     d. Si story UI → VÉRIFICATION VISUELLE (new!)   │
+│     e. Si échec → fix auto (max 3x)                 │
+│     f. git commit (auto)                            │
+│     g. 📱 Notification: "✅ [X/N] done"             │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  4. METTRE À JOUR AGENTS.md (si pertinent)          │
-│     - Ajouter nouveaux patterns découverts          │
-│     - Documenter gotchas rencontrés                 │
-│     - Mettre à jour date de dernière modification   │
+│  3bis. VÉRIFICATION VISUELLE (stories UI)           │
+│     - Ouvrir browser sur localhost:3000             │
+│     - Screenshot automatique                        │
+│     - Analyser si le rendu est correct              │
+│     - Si problème visuel → fix auto                 │
+│     - Utilise: Browser Use CLI ou Chrome MCP        │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  5. PUSH & PR                                       │
+│  4. METTRE À JOUR CODEBASE PATTERNS (auto)          │
+│     - SI nouveau pattern découvert → ajouter        │
+│     - SI gotcha rencontré → documenter              │
+└─────────────────────────────────────────────────────┘
+        ↓
+┌─────────────────────────────────────────────────────┐
+│  5. PUSH & PR (auto, pas de question)               │
 │     - git push -u origin {branche}                  │
-│     - gh pr create avec summary auto-généré         │
-│     - Retourner URL de la PR                        │
+│     - gh pr create --fill                           │
 └─────────────────────────────────────────────────────┘
         ↓
 ┌─────────────────────────────────────────────────────┐
-│  6. ARCHIVER & RAPPORT FINAL                        │
-│     - mv tasks/prd-{feature}.json tasks/archive/    │
-│     - mv tasks/progress-{feature}.txt tasks/archive/│
-│     - 📱 Notification: "🎉 Build complete: {feature}"│
+│  6. RAPPORT FINAL (pas de question "autre chose?")  │
 │     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━       │
-│     ✅ RALPH COMPLETE                               │
-│     📝 Commits: X                                   │
-│     📁 Fichiers modifiés: Y                         │
-│     🔗 PR: https://github.com/.../pull/N            │
-│     📚 AGENTS.md: [mis à jour / inchangé]           │
-│     📂 Archived: tasks/archive/prd-{feature}.json   │
+│     ✅ FAIT                                         │
+│     📝 Commits: X | 📁 Fichiers: Y                  │
+│     🔗 PR: [URL]                                    │
+│     👁️ Vérifié visuellement: ✅                     │
+│     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━       │
+│     Prochaine suggestion: [action logique]          │
 └─────────────────────────────────────────────────────┘
 ```
+
+## Vérification Visuelle Automatique (NOUVEAU)
+
+Pour chaque story qui modifie l'UI, Ralph vérifie visuellement le résultat.
+
+### Comment ça marche
+
+```bash
+# Option 1: Browser Use CLI (recommandé)
+npx browser-use screenshot http://localhost:3000 --output screenshots/
+
+# Option 2: Chrome MCP (si disponible)
+# Utilise mcp__Claude_in_Chrome__computer action=screenshot
+```
+
+### Quand vérifier visuellement
+
+| Type de fichier modifié | Vérification visuelle |
+|------------------------|----------------------|
+| `*.tsx` dans `app/` | ✅ Oui |
+| `*.tsx` dans `components/` | ✅ Oui |
+| `*.css`, `*.scss` | ✅ Oui |
+| `tailwind.config.*` | ✅ Oui |
+| `*.ts` dans `lib/` | ❌ Non |
+| `route.ts` (API) | ❌ Non |
+
+### Critères de validation visuelle
+
+1. **Page charge sans erreur** (pas de blank screen)
+2. **Pas d'erreur dans la console**
+3. **Éléments attendus visibles** (selon story)
+4. **Responsive OK** (screenshot mobile + desktop)
+
+Si problème détecté → fix automatique → re-vérifier (max 3x)
 
 ## Format PRD Attendu
 
