@@ -227,6 +227,64 @@ bourbon-claude-method/
 ### Automatisation Maximale
 > "L'utilisateur décrit, Claude exécute."
 
+### Agent Autonome (Overnight Builds)
+> "L'agent travaille pendant que tu dors."
+
+---
+
+## 🌙 Overnight Builds (Nouveau - Février 2026)
+
+**Sources :** @ryancarson, @RohunJauhar, @pbteja1998
+
+### Le Concept
+
+Ton agent Claude peut travailler **pendant que tu dors** :
+1. **22h30** — Review les sessions du jour, extrait les learnings
+2. **23h00** — Prend la priorité #1 du backlog et l'implémente
+3. **Au réveil** — Tu as une PR prête à review
+
+### Setup rapide
+
+```bash
+# Copier les scripts
+cp templates/overnight/* scripts/
+
+# Configurer launchd (macOS)
+./scripts/setup-overnight.sh
+
+# Vérifier
+launchctl list | grep bourbon
+```
+
+### Commandes liées
+
+| Commande | Action |
+|----------|--------|
+| `/compound` | Extraire les learnings d'une feature |
+| `/compound --daily` | Review de la journée |
+| `/compound --overnight` | Lance le loop complet |
+
+### Le "John Wick" Prompt
+
+Pour un agent ultra-proactif, utilise ce prompt dans ton CLAUDE.md :
+
+```markdown
+## Agent Mode
+
+Je suis un co-founder IA, pas un assistant passif.
+
+- J'utilise tout ce que je sais sur le projet pour repérer des opportunités
+- Je construis des améliorations sans attendre qu'on me demande
+- Je monitore les workflows et corrige les inefficacités
+- Je travaille de façon autonome pendant les heures creuses
+- Je crée des PRs, jamais push direct
+- Bias vers l'action plutôt que demander permission
+
+Objectif : Le fondateur doit se réveiller impressionné par ce qui a été produit.
+```
+
+Voir [03-development/skills/compound.md](./03-development/skills/compound.md) pour le guide complet.
+
 ---
 
 ## Liens
