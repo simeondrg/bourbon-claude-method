@@ -1,67 +1,66 @@
 # CLAUDE.md - [Nom du Projet]
+# Bourbon-Claude v2.2
 
 ## Projet
-
 **[Nom]** : [description en 1 ligne]
-
 - **Cible** : [qui utilise]
 - **Stack** : Next.js 14 + Supabase + Vercel + Stripe
 
-## Structure
+## Workflow Orchestration
 
-```
-src/
-├── app/           # Routes (auth, dashboard, marketing, api)
-├── components/    # UI (shadcn) + features
-├── lib/           # Supabase, Stripe, utils
-├── hooks/
-└── types/
+### 1. Plan Mode Default
+- Plan mode pour TOUTE tâche non-triviale (3+ étapes)
+- Si ça dérape, STOP et re-plan immédiatement
 
-tasks/             # PRDs actifs
-.claude/rules/     # Règles modulaires (automation, stack, quality, patterns)
-```
+### 2. Subagent Strategy
+- Subagents pour garder le contexte principal propre
+- Une tâche par subagent pour exécution focalisée
 
-## Commandes
+### 3. Self-Improvement Loop
+- Après TOUTE correction : mettre à jour `tasks/lessons.md`
+- Relire les leçons en début de session
 
-```bash
-npm run dev        # Développement
-npm run build      # Build
-npm run lint       # Lint
-npm run typecheck  # Types
-```
+### 4. Verification Before Done
+- Ne jamais marquer terminé sans prouver que ça fonctionne
+- Diff main vs changements quand pertinent
 
-## Commandes Claude
+### 5. Demand Elegance (Équilibré)
+- Non-trivial : "y a-t-il un moyen plus élégant ?"
+- Simple/évident : ne pas over-engineer
 
+### 6. Autonomous Bug Fixing
+- Bug report → juste fixer. Pas de hand-holding
+
+## Conventions
+- TypeScript strict, Mobile-first, Français dans UI
+- shadcn/ui, Tailwind uniquement, Server Components par défaut
+- Jamais de secrets en dur, Validation Zod serveur, RLS Supabase
+- LCP < 2.5s, CLS < 0.1
+
+## Compound Engineering
+**Où codifier** :
+- `AGENTS.md` : guidance projet-wide
+- `tasks/lessons.md` : erreurs à ne plus répéter
+- `tasks/todo.md` : plan avec items cochables
+- Tests : transformer bugs en tests de régression
+
+## Skills Auto-Invocation
+| Contexte | Skill |
+|----------|-------|
+| Composant React | `/vercel-react-best-practices` |
+| Table Supabase | `/supabase-postgres-best-practices` |
+| Paiement Stripe | `/stripe-best-practices` |
+| Tests | `/test-driven-development` |
+| Auth | `/better-auth-best-practices` |
+| Debug complexe | `/systematic-debugging` |
+| Fin de feature | `/verification-before-completion` |
+
+## Commandes Projet
 | Commande | Action |
 |----------|--------|
-| `/compact` | Compresser le contexte (libérer tokens) |
-| `/usage` | Voir consommation tokens |
-| `/context` | Voir tokens utilisés |
-| `/clear` | Nouveau départ |
-
-## Raccourcis
-
-| Touche | Action |
-|--------|--------|
-| `Ctrl+S` | Stash prompt |
-| `Ctrl+C` | Interrompre |
-| `!` | Autocomplete historique bash |
-| `Escape` | Annuler input |
-
-## Variables d'environnement
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-```
-
----
-
-> Les règles détaillées sont dans `.claude/rules/` :
-> - `automation.md` - Comportement auto
-> - `stack.md` - Technologies
-> - `quality.md` - Standards code
-> - `patterns.md` - Patterns découverts (auto-rempli)
+| `/full-build [description]` | Pipeline complet idée → ship |
+| `/prd [feature]` | Générer un PRD structuré |
+| `/ralph [feature]` | Build autonome depuis PRD |
+| `/commit` | Commit conventionnel |
+| `/deploy` | Déployer sur Vercel |
+| `/compound [feature]` | Documenter les apprentissages |
